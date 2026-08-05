@@ -211,17 +211,35 @@
 
     </main>
 
-    <!-- Script para cargar el conteo dinámico de datos -->
+    <!-- Script Corregido para Conteo Dinámico -->
     <script>
         function cargarEstadisticas() {
             const registros = JSON.parse(localStorage.getItem('registrosIglesia')) || [];
             
             document.getElementById('totalRegistros').innerText = registros.length;
             
-            const miembros = registros.filter(r => r.tipoPersona === 'Miembro').length;
-            const lideres = registros.filter(r => r.tipoPersona === 'Lider').length;
-            const ninos = registros.filter(r => r.tipoPersona === 'Nino').length;
-            const amigos = registros.filter(r => r.tipoPersona === 'Amigo').length;
+            let miembros = 0;
+            let lideres = 0;
+            let ninos = 0;
+            let amigos = 0;
+
+            registros.forEach(r => {
+                // Normaliza el texto para evitar fallos con tildes y mayúsculas
+                const tipo = (r.tipoPersona || 'Miembro')
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "");
+
+                if (tipo === 'lider') {
+                    lideres++;
+                } else if (tipo === 'nino') {
+                    ninos++;
+                } else if (tipo === 'amigo') {
+                    amigos++;
+                } else {
+                    miembros++;
+                }
+            });
 
             document.getElementById('totalMiembros').innerText = miembros;
             document.getElementById('totalLideres').innerText = lideres;
@@ -229,7 +247,7 @@
             document.getElementById('totalAmigos').innerText = amigos;
         }
 
-        window.onload = cargarEstadisticas;
+        window.addEventListener('DOMContentLoaded', cargarEstadisticas);
     </script>
 
 </body>
