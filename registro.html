@@ -3,192 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha de Registro - Casa de Liberación</title>
+    <title>Ficha de Registro - Casa de Liberación y Restauración</title>
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 20px 10px;
-        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; margin: 0; padding: 20px 10px; }
 
         .contenedor-ficha {
-            width: 100%;
-            max-width: 750px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 25px 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%; max-width: 750px; margin: 0 auto; background: #ffffff;
+            padding: 25px 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
 
-        .encabezado-ficha {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e9ecef;
-        }
+        .encabezado-ficha { text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #e9ecef; }
+        .encabezado-ficha h1 { color: #0b5ed7; margin: 0 0 5px 0; font-size: 24px; }
+        .encabezado-ficha h2 { color: #6c757d; margin: 0; font-size: 15px; font-weight: 500; }
 
-        .encabezado-ficha h1 {
-            color: #0b5ed7;
-            margin: 0 0 5px 0;
-            font-size: 24px;
-        }
-
-        .encabezado-ficha h2 {
-            color: #6c757d;
-            margin: 0;
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        /* Selector de Tipo de Persona */
         .bloque-tipo-registro {
-            background-color: #eef2ff;
-            border: 2px solid #6366f1;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
+            background-color: #eef2ff; border: 2px solid #6366f1; padding: 15px; border-radius: 10px; margin-bottom: 25px;
         }
-
-        .bloque-tipo-registro label {
-            font-size: 15px;
-            font-weight: 700;
-            color: #3730a3;
-            display: block;
-            margin-bottom: 8px;
-        }
-
+        .bloque-tipo-registro label { font-size: 15px; font-weight: 700; color: #3730a3; display: block; margin-bottom: 8px; }
         .bloque-tipo-registro select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #a5b4fc;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #1e1b4b;
-            background-color: #fff;
-            outline: none;
-            cursor: pointer;
+            width: 100%; padding: 12px; border: 1px solid #a5b4fc; border-radius: 6px;
+            font-size: 15px; font-weight: 600; color: #1e1b4b; background-color: #fff; outline: none; cursor: pointer;
         }
 
-        /* Tarjetas de Secciones */
         .seccion-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-left: 4px solid #0b5ed7;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #0b5ed7;
+            border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
-        .seccion-titulo {
-            font-size: 16px;
-            font-weight: bold;
-            color: #1e293b;
-            margin-bottom: 15px;
-        }
+        .seccion-titulo { font-size: 16px; font-weight: bold; color: #1e293b; margin-bottom: 15px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; }
 
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 15px;
+        .campo-grupo { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+        .campo-grupo label { font-size: 14px; font-weight: 600; color: #475569; }
+        .campo-grupo input, .campo-grupo select, .campo-grupo textarea {
+            padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; background-color: #fff;
         }
+        .campo-grupo input:focus, .campo-grupo select:focus { border-color: #0b5ed7; box-shadow: 0 0 0 3px rgba(11, 94, 215, 0.15); }
 
-        .campo-grupo {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
-
-        .campo-grupo label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #475569;
-        }
-
-        .campo-grupo input, 
-        .campo-grupo select,
-        .campo-grupo textarea {
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 14px;
-            outline: none;
-            background-color: #fff;
-        }
-
-        .campo-grupo input:focus, 
-        .campo-grupo select:focus {
-            border-color: #0b5ed7;
-            box-shadow: 0 0 0 3px rgba(11, 94, 215, 0.15);
-        }
-
-        /* Grid de Ministerios en Selección Múltiple */
-        .grid-ministerios {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-
+        .grid-ministerios { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
         .item-ministerio {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background-color: #f8fafc;
-            border: 1px solid #cbd5e1;
-            padding: 10px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            user-select: none;
+            display: flex; align-items: center; gap: 10px; background-color: #f8fafc;
+            border: 1px solid #cbd5e1; padding: 10px 12px; border-radius: 6px; cursor: pointer; user-select: none;
         }
-
-        .item-ministerio:hover {
-            background-color: #e2e8f0;
-        }
-
-        .item-ministerio input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #0b5ed7;
-            cursor: pointer;
-        }
-
-        .item-ministerio span {
-            font-size: 14px;
-            color: #334155;
-            font-weight: 500;
-        }
+        .item-ministerio:hover { background-color: #e2e8f0; }
+        .item-ministerio input[type="checkbox"] { width: 18px; height: 18px; accent-color: #0b5ed7; cursor: pointer; }
+        .item-ministerio span { font-size: 14px; color: #334155; font-weight: 500; }
 
         .btn-guardar {
-            width: 100%;
-            background-color: #0b5ed7;
-            color: white;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(11, 94, 215, 0.2);
-            margin-top: 10px;
+            width: 100%; background-color: #0b5ed7; color: white; padding: 14px; border: none;
+            border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(11, 94, 215, 0.2); margin-top: 10px;
         }
-
-        .btn-guardar:hover {
-            background-color: #0a58ca;
-        }
-
-        /* Clase auxiliar para ocultar secciones */
-        .oculto {
-            display: none !important;
-        }
+        .btn-guardar:hover { background-color: #0a58ca; }
+        .oculto { display: none !important; }
     </style>
 </head>
 <body>
@@ -201,7 +69,6 @@
 
         <form id="formRegistro">
             
-            <!-- Selector Principal -->
             <div class="bloque-tipo-registro">
                 <label for="tipoPersona">📌 ¿A quién vas a registrar?</label>
                 <select id="tipoPersona" onchange="cambiarTipoPersona()">
@@ -212,71 +79,64 @@
                 </select>
             </div>
 
-            <!-- Bloque 1: Datos Básicos -->
             <div class="seccion-card">
                 <div class="seccion-titulo">👤 Datos Generales</div>
                 
                 <div class="campo-grupo">
                     <label>Nombre Completo *</label>
-                    <input type="text" id="nombre" placeholder="Nombre y Apellidos" required>
+                    <input type="text" id="nombre" name="Nombre Completo" placeholder="Nombre y Apellidos" required>
                 </div>
 
                 <div class="grid-2">
                     <div class="campo-grupo" id="campoTelefono">
                         <label>Teléfono</label>
-                        <input type="tel" id="telefono" placeholder="Ej. 809-123-4567">
+                        <input type="tel" id="telefono" name="Teléfono" placeholder="Ej. 809-123-4567">
                     </div>
                     <div class="campo-grupo">
                         <label>Fecha de Nacimiento *</label>
-                        <input type="date" id="fechaNacimiento" required>
+                        <input type="date" id="fechaNacimiento" name="Fecha Nacimiento" required>
                     </div>
                 </div>
 
                 <div class="grid-2">
                     <div class="campo-grupo" id="campoCorreo">
                         <label>Correo Electrónico</label>
-                        <input type="email" id="correo" placeholder="correo@ejemplo.com">
+                        <input type="email" id="correo" name="Correo" placeholder="correo@ejemplo.com">
                     </div>
                     <div class="campo-grupo">
                         <label>Dirección / Dónde vive *</label>
-                        <input type="text" id="direccion" placeholder="Calle, #, Sector..." required>
+                        <input type="text" id="direccion" name="Dirección" placeholder="Calle, #, Sector..." required>
                     </div>
                 </div>
             </div>
 
-            <!-- Bloque Padres/Tutor (Solo para Niños) -->
             <div id="seccionTutor" class="seccion-card oculto">
                 <div class="seccion-titulo">👨‍👩‍👧 Datos del Padre / Tutor Responsable</div>
                 <div class="grid-2">
                     <div class="campo-grupo">
                         <label>Nombre del Tutor / Padre *</label>
-                        <input type="text" id="tutor" placeholder="Nombre completo del responsable">
+                        <input type="text" id="tutor" name="Tutor" placeholder="Nombre completo del responsable">
                     </div>
                     <div class="campo-grupo">
                         <label>Teléfono del Tutor *</label>
-                        <input type="tel" id="telefonoTutor" placeholder="Ej. 809-000-0000">
+                        <input type="tel" id="telefonoTutor" name="Teléfono Tutor" placeholder="Ej. 809-000-0000">
                     </div>
                 </div>
             </div>
 
-            <!-- Bloque Crecimiento Espiritual -->
             <div id="seccionEspiritual" class="seccion-card">
                 <div class="seccion-titulo">📖 Crecimiento Espiritual</div>
-                
                 <div class="grid-2">
-                    <!-- Bautismo (Oculto para niños) -->
                     <div class="campo-grupo" id="campoBautizado">
                         <label>¿Es Bautizado/a?</label>
-                        <select id="bautizado">
+                        <select id="bautizado" name="¿Es Bautizado?">
                             <option value="No">No</option>
                             <option value="Sí">Sí</option>
                         </select>
                     </div>
-
-                    <!-- Desplegable de Clase -->
                     <div class="campo-grupo" id="campoClase">
                         <label>Clase Actual</label>
-                        <select id="clase">
+                        <select id="clase" name="Clase Actual">
                             <option value="Ninguna">Ninguna / Pendiente</option>
                             <option value="Pre doctrina">Pre doctrina</option>
                             <option value="Doctrina">Doctrina</option>
@@ -287,65 +147,28 @@
                 </div>
             </div>
 
-            <!-- Bloque Ministerios (Selección Múltiple) -->
             <div id="seccionMinisterios" class="seccion-card">
                 <div class="seccion-titulo">🤝 Ministerios (Puedes seleccionar varios)</div>
-                
                 <div class="grid-ministerios">
-                    <label class="item-ministerio">
-                        <input type="checkbox" name="ministerio" value="Pastor">
-                        <span>Pastor</span>
-                    </label>
-                    <label class="item-ministerio">
-                        <input type="checkbox" name="ministerio" value="Maestro">
-                        <span>Maestro</span>
-                    </label>
-                    <label class="item-ministerio">
-                        <input type="checkbox" name="ministerio" value="Evanjelismo">
-                        <span>Evangelismo</span>
-                    </label>
-                    <label class="item-ministerio">
-                        <input type="checkbox" name="ministerio" value="Alabanzas">
-                        <span>Alabanzas</span>
-                    </label>
-                    <label class="item-ministerio">
-                        <input type="checkbox" name="ministerio" value="Músicos">
-                        <span>Músicos</span>
-                    </label>
-                    <label class="item-ministerio">
-                        <input type="checkbox" name="ministerio" value="Servidores o Ujieres">
-                        <span>Servidores o Ujieres</span>
-                    </label>
-                    <label class="item-ministerio">
-                        <input type="checkbox" name="ministerio" value="Damas">
-                        <span>Damas</span>
-                    </label>
-                    <label class="item-ministerio">
-                        <input type="checkbox" name="ministerio" value="Caballeros">
-                        <span>Caballeros</span>
-                    </label>
-                    <label class="item-ministerio">
-                        <input type="checkbox" name="ministerio" value="Niños">
-                        <span>Niños</span>
-                    </label>
-                    <label class="item-ministerio">
-                        <input type="checkbox" name="ministerio" value="Jóvenes">
-                        <span>Jóvenes</span>
-                    </label>
-                    <label class="item-ministerio">
-                        <input type="checkbox" name="ministerio" value="Intercesión">
-                        <span>Intercesión</span>
-                    </label>
+                    <label class="item-ministerio"><input type="checkbox" name="ministerio" value="Pastor"><span>Pastor</span></label>
+                    <label class="item-ministerio"><input type="checkbox" name="ministerio" value="Maestro"><span>Maestro</span></label>
+                    <label class="item-ministerio"><input type="checkbox" name="ministerio" value="Evangelismo"><span>Evangelismo</span></label>
+                    <label class="item-ministerio"><input type="checkbox" name="ministerio" value="Alabanzas"><span>Alabanzas</span></label>
+                    <label class="item-ministerio"><input type="checkbox" name="ministerio" value="Músicos"><span>Músicos</span></label>
+                    <label class="item-ministerio"><input type="checkbox" name="ministerio" value="Servidores o Ujieres"><span>Servidores o Ujieres</span></label>
+                    <label class="item-ministerio"><input type="checkbox" name="ministerio" value="Damas"><span>Damas</span></label>
+                    <label class="item-ministerio"><input type="checkbox" name="ministerio" value="Caballeros"><span>Caballeros</span></label>
+                    <label class="item-ministerio"><input type="checkbox" name="ministerio" value="Niños"><span>Niños</span></label>
+                    <label class="item-ministerio"><input type="checkbox" name="ministerio" value="Jóvenes"><span>Jóvenes</span></label>
+                    <label class="item-ministerio"><input type="checkbox" name="ministerio" value="Intercesión"><span>Intercesión</span></label>
                 </div>
             </div>
 
-            <!-- Bloque Talentos, Dones o Profesión -->
             <div id="seccionTalentos" class="seccion-card">
                 <div class="seccion-titulo">🌟 Información Adicional</div>
-                
                 <div class="campo-grupo">
                     <label>Talentos, Dones o Profesión</label>
-                    <input type="text" id="gustos" placeholder="Ej. Canto, Electricista, Docente, Cocina...">
+                    <input type="text" id="gustos" name="Talentos / Profesión" placeholder="Ej. Canto, Electricista, Docente, Cocina...">
                 </div>
             </div>
 
@@ -353,7 +176,6 @@
         </form>
     </div>
 
-    <!-- Script para adaptar las opciones visiblemente -->
     <script>
         function cambiarTipoPersona() {
             const tipo = document.getElementById('tipoPersona').value;
@@ -368,41 +190,76 @@
             const campoCorreo = document.getElementById('campoCorreo');
 
             if (tipo === 'Nino') {
-                // Configuración para Niños
                 seccionTutor.classList.remove('oculto');
                 seccionEspiritual.classList.remove('oculto');
-                campoBautizado.classList.add('oculto'); // Ocultar bautizo para niños
-                
+                campoBautizado.classList.add('oculto');
                 seccionMinisterios.classList.add('oculto');
                 seccionTalentos.classList.add('oculto');
                 campoCorreo.classList.add('oculto');
                 campoTelefono.classList.add('oculto');
 
             } else if (tipo === 'Amigo') {
-                // Configuración para Amigos / Visitantes
                 seccionTutor.classList.add('oculto');
                 seccionEspiritual.classList.add('oculto');
                 seccionMinisterios.classList.add('oculto');
                 seccionTalentos.classList.add('oculto');
-                
                 campoCorreo.classList.remove('oculto');
                 campoTelefono.classList.remove('oculto');
 
             } else {
-                // Configuración para Miembros y Líderes (Ficha Completa)
                 seccionTutor.classList.add('oculto');
                 seccionEspiritual.classList.remove('oculto');
                 campoBautizado.classList.remove('oculto');
                 seccionMinisterios.classList.remove('oculto');
                 seccionTalentos.classList.remove('oculto');
-                
                 campoCorreo.classList.remove('oculto');
                 campoTelefono.classList.remove('oculto');
             }
         }
 
-        // Ejecutar al iniciar la página
-        window.onload = cambiarTipoPersona;
+        window.addEventListener('DOMContentLoaded', () => {
+            cambiarTipoPersona();
+
+            const idParaEditar = localStorage.getItem('editarRegistroId');
+            if (idParaEditar) {
+                const registros = JSON.parse(localStorage.getItem('registrosIglesia')) || [];
+                const registro = registros.find(r => r.id == idParaEditar);
+
+                if (registro) {
+                    let inputId = document.getElementById('registroId');
+                    if (!inputId) {
+                        inputId = document.createElement('input');
+                        inputId.type = 'hidden';
+                        inputId.id = 'registroId';
+                        document.getElementById('formRegistro').appendChild(inputId);
+                    }
+                    inputId.value = registro.id;
+
+                    document.getElementById('tipoPersona').value = registro.tipoPersona;
+                    document.getElementById('nombre').value = registro.nombre;
+                    document.getElementById('fechaNacimiento').value = registro.fechaNacimiento;
+                    document.getElementById('direccion').value = registro.direccion;
+                    if (document.getElementById('telefono')) document.getElementById('telefono').value = registro.telefono;
+                    if (document.getElementById('correo')) document.getElementById('correo').value = registro.correo;
+                    if (document.getElementById('tutor')) document.getElementById('tutor').value = registro.tutor;
+                    if (document.getElementById('telefonoTutor')) document.getElementById('telefonoTutor').value = registro.telefonoTutor;
+                    if (document.getElementById('bautizado')) document.getElementById('bautizado').value = registro.bautizado;
+                    if (document.getElementById('clase')) document.getElementById('clase').value = registro.clase;
+                    if (document.getElementById('gustos')) document.getElementById('gustos').value = registro.talentos;
+
+                    if (registro.ministerios) {
+                        const minsArr = registro.ministerios.split(', ');
+                        document.querySelectorAll('input[name="ministerio"]').forEach(cb => {
+                            cb.checked = minsArr.includes(cb.value);
+                        });
+                    }
+
+                    cambiarTipoPersona();
+                }
+
+                localStorage.removeItem('editarRegistroId');
+            }
+        });
     </script>
 
     <script src="js/registro.js"></script>
