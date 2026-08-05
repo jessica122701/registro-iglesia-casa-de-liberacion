@@ -5,7 +5,7 @@ document.getElementById('formLogin').addEventListener('submit', function(e) {
     const clave = document.getElementById('clave').value;
 
     // Puedes cambiar aquí tu usuario y clave si lo deseas
-    if (usuario === 'admin' && clave === '1234') {
+    if (usuario === 'casa de liberacion' && clave ==='011517') {
         sessionStorage.setItem('adminAutenticado', 'true');
         window.location.href = 'dashboard.html';
     } else {
