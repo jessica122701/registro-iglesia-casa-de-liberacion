@@ -3,150 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso - Casa de Liberación</title>
+    <title>Acceso - Casa de Liberación y Restauración</title>
+    
+    <!-- Tipografía impactante de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Segoe+UI:wght@600;700&display=swap" rel="stylesheet">
+
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
         }
+        
         body {
-            background-color: #f4f6f9;
+            background: radial-gradient(circle at center, #1a2332 0%, #0d1117 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
             padding: 20px;
         }
+
         .card-login {
             background: #ffffff;
-            padding: 30px 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px 28px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 15px rgba(212, 175, 55, 0.15);
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             text-align: center;
-        }
-        .card-login h1 {
-            color: #0b5ed7;
-            font-size: 22px;
-            margin-bottom: 5px;
-        }
-        .card-login h2 {
-            color: #6c757d;
-            font-size: 14px;
-            margin-bottom: 25px;
-            font-weight: normal;
+            border: 1px solid rgba(212, 175, 55, 0.3);
         }
 
-        /* BANNER DESTACADO PARA EL FORMULARIO PÚBLICO */
-        .bloque-publico {
-            background-color: #e8f5e9;
-            border: 2px solid #2e7d32;
-            padding: 15px;
-            border-radius: 10px;
+        /* --- LOGO DESTACADO CON COLORES Y BRILLO --- */
+        .logo-contenedor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin-bottom: 25px;
+            background: #0d1117; /* Fondo oscuro interno para resaltar el oro */
+            padding: 22px 15px;
+            border-radius: 14px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid #d4af37;
+        }
+
+        /* ONDAS EN SVG CON GLOW DORADO */
+        .logo-ondas {
+            width: 120px;
+            height: 38px;
+            margin-bottom: 6px;
+            filter: drop-shadow(0px 2px 6px rgba(255, 215, 0, 0.6));
+        }
+
+        /* LÍNEAS DORADAS DE SEPARACIÓN */
+        .linea-logo {
+            width: 90%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ffe57f, #d4af37, #ffe57f, transparent);
+            border-radius: 2px;
+            margin: 6px 0;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+
+        /* TEXTO DEL NOMBRE EN ORO METÁLICO Y BRILLANTE */
+        .logo-texto {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 21px;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            line-height: 1.3;
+            padding: 4px 0;
+            
+            /* Gradiente Oro Real con Brillo Central */
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            /* Sombra de texto radiante */
+            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.9));
+        }
+
+        .subtitulo-logo {
+            color: #cbd5e1;
+            font-size: 13px;
+            margin-top: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* BANNER PÚBLICO DESTACADO EN VERDE ESMERALDA */
+        .bloque-publico {
+            background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 2px solid #16a34a;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            box-shadow: 0 4px 10px rgba(22, 163, 74, 0.1);
         }
 
         .bloque-publico p {
             margin: 0 0 10px 0;
             font-size: 14px;
-            font-weight: 600;
-            color: #1b5e20;
+            font-weight: 700;
+            color: #14532d;
         }
 
         .btn-publico {
             display: block;
-            background-color: #198754;
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
             color: white;
-            padding: 12px;
+            padding: 13px;
             border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 15px;
+            font-weight: 800;
             text-decoration: none;
-            transition: background-color 0.2s;
-            box-shadow: 0 3px 8px rgba(25, 135, 84, 0.3);
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .btn-publico:hover {
-            background-color: #157347;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(22, 163, 74, 0.45);
         }
 
         .separador {
             display: flex;
             align-items: center;
             text-align: center;
-            color: #94a3b8;
-            font-size: 12px;
-            font-weight: bold;
-            margin: 20px 0;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+            margin: 22px 0;
+            letter-spacing: 0.5px;
         }
 
         .separador::before, .separador::after {
             content: '';
             flex: 1;
-            border-bottom: 1px solid #cbd5e1;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .separador span {
             padding: 0 10px;
         }
 
-        /* Formulario de Admin */
+        /* Formulario de Login Admin */
         .campo {
             text-align: left;
             margin-bottom: 15px;
         }
         .campo label {
             display: block;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 700;
             color: #475569;
             margin-bottom: 5px;
         }
         .campo input {
             width: 100%;
-            padding: 10px;
+            padding: 11px;
             border: 1px solid #cbd5e1;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 14px;
             outline: none;
+            transition: border-color 0.2s;
         }
         .campo input:focus {
-            border-color: #0b5ed7;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
         }
         .btn-entrar {
             width: 100%;
-            background-color: #0b5ed7;
-            color: white;
+            background: #0f172a;
+            color: #f8fafc;
             padding: 12px;
             border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: bold;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
             margin-top: 5px;
+            transition: background 0.2s;
         }
         .btn-entrar:hover {
-            background-color: #0a58ca;
+            background: #1e293b;
         }
     </style>
 </head>
 <body>
 
     <div class="card-login">
-        <h1>Casa de Liberación y Restauración</h1>
-        <h2>Sistema de Registro y Membresía</h2>
+        
+        <!-- ENCABEZADO CON LOGO RESALTADO Y BRILLANTE -->
+        <div class="logo-contenedor">
+            <!-- Ondas Doradas Radiantes -->
+            <svg class="logo-ondas" viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 5 22 C 30 8, 45 28, 70 14 C 80 8, 90 12, 95 14 C 80 4, 60 18, 40 8 C 25 2, 12 14, 5 22 Z" fill="url(#oroGrad1)"/>
+                <path d="M 15 26 C 35 14, 50 30, 75 18 C 85 14, 92 16, 95 18 C 82 8, 65 22, 45 12 C 30 6, 20 18, 15 26 Z" fill="url(#oroGrad2)"/>
+                <defs>
+                    <linearGradient id="oroGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#ffe57f" />
+                        <stop offset="50%" stop-color="#d4af37" />
+                        <stop offset="100%" stop-color="#aa771c" />
+                    </linearGradient>
+                    <linearGradient id="oroGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#fff176" />
+                        <stop offset="50%" stop-color="#ffb300" />
+                        <stop offset="100%" stop-color="#ff6f00" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            
+            <div class="linea-logo"></div>
+            <div class="logo-texto">
+                CASA DE LIBERACION<br>Y RESTAURACION
+            </div>
+            <div class="linea-logo"></div>
 
-        <!-- BOTÓN PÚBLICO GRANDE Y DESTACADO -->
+            <div class="subtitulo-logo">Sistema de Registro y Membresía</div>
+        </div>
+
+        <!-- BOTÓN PÚBLICO DESTACADO -->
         <div class="bloque-publico">
-            <p>¿Eres miembro, líder, amigo o vas a registrar a un niño?</p>
-            <a href="registro.html" class="btn-publico">📝 Llenar Ficha de Registro</a>
+            <p>¿Vas a llenar tu ficha de registro?</p>
+            <a href="registro.html" class="btn-publico">📝 Llenar Ficha Aquí</a>
         </div>
 
         <div class="separador"><span>O INICIA SESIÓN SI ERES ADMIN</span></div>
 
-        <!-- ACCESO SOLO PARA ADMINISTRADORES -->
+        <!-- FORMULARIO DE ACCESO ADMIN -->
         <form id="formLogin">
             <div class="campo">
                 <label for="usuario">Usuario Administrador</label>
@@ -156,7 +248,7 @@
                 <label for="clave">Contraseña</label>
                 <input type="password" id="clave" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="btn-entrar">🔐 Entrar al Panel</button>
+            <button type="submit" class="btn-entrar">🔐 Acceso Privado</button>
         </form>
 
     </div>
