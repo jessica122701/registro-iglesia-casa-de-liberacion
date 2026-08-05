@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso Administrativo - Casa de Liberación</title>
+    <title>Acceso - Casa de Liberación</title>
     <style>
         * {
             box-sizing: border-box;
@@ -14,12 +14,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
         }
         .card-login {
             background: #ffffff;
-            padding: 30px;
+            padding: 30px 25px;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             width: 100%;
@@ -37,6 +38,61 @@
             margin-bottom: 25px;
             font-weight: normal;
         }
+
+        /* BANNER DESTACADO PARA EL FORMULARIO PÚBLICO */
+        .bloque-publico {
+            background-color: #e8f5e9;
+            border: 2px solid #2e7d32;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .bloque-publico p {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1b5e20;
+        }
+
+        .btn-publico {
+            display: block;
+            background-color: #198754;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            box-shadow: 0 3px 8px rgba(25, 135, 84, 0.3);
+        }
+
+        .btn-publico:hover {
+            background-color: #157347;
+        }
+
+        .separador {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .separador::before, .separador::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .separador span {
+            padding: 0 10px;
+        }
+
+        /* Formulario de Admin */
         .campo {
             text-align: left;
             margin-bottom: 15px;
@@ -66,20 +122,13 @@
             padding: 12px;
             border: none;
             border-radius: 6px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         .btn-entrar:hover {
             background-color: #0a58ca;
-        }
-        .link-publico {
-            display: block;
-            margin-top: 20px;
-            color: #0b5ed7;
-            font-size: 13px;
-            text-decoration: none;
         }
     </style>
 </head>
@@ -87,21 +136,29 @@
 
     <div class="card-login">
         <h1>Casa de Liberación y Restauración</h1>
-        <h2>Acceso solo para Administradores</h2>
+        <h2>Sistema de Registro y Membresía</h2>
 
+        <!-- BOTÓN PÚBLICO GRANDE Y DESTACADO -->
+        <div class="bloque-publico">
+            <p>¿Eres miembro, líder, amigo o vas a registrar a un niño?</p>
+            <a href="registro.html" class="btn-publico">📝 Llenar Ficha de Registro</a>
+        </div>
+
+        <div class="separador"><span>O INICIA SESIÓN SI ERES ADMIN</span></div>
+
+        <!-- ACCESO SOLO PARA ADMINISTRADORES -->
         <form id="formLogin">
             <div class="campo">
-                <label for="usuario">Usuario</label>
+                <label for="usuario">Usuario Administrador</label>
                 <input type="text" id="usuario" placeholder="Ej. admin" required>
             </div>
             <div class="campo">
                 <label for="clave">Contraseña</label>
                 <input type="password" id="clave" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="btn-entrar">🔐 Iniciar Sesión</button>
+            <button type="submit" class="btn-entrar">🔐 Entrar al Panel</button>
         </form>
 
-        <a href="registro.html" class="link-publico">Ir al Formulario Público de Registro →</a>
     </div>
 
     <script src="js/login.js"></script>
