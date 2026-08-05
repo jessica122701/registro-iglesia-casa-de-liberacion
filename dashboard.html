@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Casa de Liberación</title>
+    
+    <!-- LÍNEA DE SEGURIDAD (Impide el acceso si no ha iniciado sesión) -->
+    <script src="js/auth.js"></script>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333333;
+        }
+
+        /* Barra de Navegación / Encabezado */
+        .header-dashboard {
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-dashboard h2 {
+            color: #0b5ed7;
+            font-size: 20px;
+        }
+
+        .btn-cerrar-sesion {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-cerrar-sesion:hover {
+            background-color: #bb2d3b;
+        }
+
+        /* Contenedor Principal */
+        .contenido-principal {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .bienvenida {
+            margin-bottom: 25px;
+        }
+
+        .bienvenida h1 {
+            font-size: 26px;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .bienvenida p {
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        /* Grilla de Tarjetas de Resumen / Estadísticas */
+        .grid-estadisticas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card-stat {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 5px solid #0b5ed7;
+        }
+
+        .card-stat h3 {
+            font-size: 14px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .card-stat .valor {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        /* Colores de acento para las tarjetas */
+        .card-stat.miembros { border-left-color: #0b5ed7; }
+        .card-stat.lideres { border-left-color: #ffc107; }
+        .card-stat.ninos { border-left-color: #0dcaf0; }
+        .card-stat.amigos { border-left-color: #198754; }
+
+        /* Accesos Rápidos / Acciones */
+        .seccion-acciones {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .seccion-acciones h2 {
+            font-size: 18px;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .grid-botones {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .btn-accion {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 20px;
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            color: #0b5ed7;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-accion:hover {
+            background-color: #0b5ed7;
+            color: white;
+            border-color: #0b5ed7;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Encabezado Privado -->
+    <header class="header-dashboard">
+        <h2>🏛️ Casa de Liberación y Restauración</h2>
+        <button class="btn-cerrar-sesion" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+    </header>
+
+    <!-- Contenido del Panel -->
+    <main class="contenido-principal">
+        
+        <div class="bienvenida">
+            <h1>Panel Principal de Administración</h1>
+            <p>Gestión general de registros y miembros de la iglesia.</p>
+        </div>
+
+        <!-- Tarjetas de Estadísticas -->
+        <div class="grid-estadisticas">
+            <div class="card-stat miembros">
+                <h3>Total Registrados</h3>
+                <div class="valor" id="totalRegistros">0</div>
+            </div>
+            <div class="card-stat miembros">
+                <h3>Miembros</h3>
+                <div class="valor" id="totalMiembros">0</div>
+            </div>
+            <div class="card-stat lideres">
+                <h3>Líderes</h3>
+                <div class="valor" id="totalLideres">0</div>
+            </div>
+            <div class="card-stat ninos">
+                <h3>Niños / Niñas</h3>
+                <div class="valor" id="totalNinos">0</div>
+            </div>
+            <div class="card-stat amigos">
+                <h3>Amigos / Visitantes</h3>
+                <div class="valor" id="totalAmigos">0</div>
+            </div>
+        </div>
+
+        <!-- Menú de Acciones Rápidas -->
+        <div class="seccion-acciones">
+            <h2>Acciones Rápidas</h2>
+            <div class="grid-botones">
+                <a href="miembros.html" class="btn-accion">
+                    📋 Ver Lista de Miembros
+                </a>
+                <a href="registro.html" class="btn-accion">
+                    ➕ Registrar Nueva Persona
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Script para cargar el conteo dinámico de datos -->
+    <script>
+        function cargarEstadisticas() {
+            const registros = JSON.parse(localStorage.getItem('registrosIglesia')) || [];
+            
+            document.getElementById('totalRegistros').innerText = registros.length;
+            
+            const miembros = registros.filter(r => r.tipoPersona === 'Miembro').length;
+            const lideres = registros.filter(r => r.tipoPersona === 'Lider').length;
+            const ninos = registros.filter(r => r.tipoPersona === 'Nino').length;
+            const amigos = registros.filter(r => r.tipoPersona === 'Amigo').length;
+
+            document.getElementById('totalMiembros').innerText = miembros;
+            document.getElementById('totalLideres').innerText = lideres;
+            document.getElementById('totalNinos').innerText = ninos;
+            document.getElementById('totalAmigos').innerText = amigos;
+        }
+
+        window.onload = cargarEstadisticas;
+    </script>
+
+</body>
+</html>

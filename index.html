@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Administrativo - Casa de Liberación</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card-login {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .card-login h1 {
+            color: #0b5ed7;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        .card-login h2 {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 25px;
+            font-weight: normal;
+        }
+        .campo {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        .campo label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 5px;
+        }
+        .campo input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+        .campo input:focus {
+            border-color: #0b5ed7;
+        }
+        .btn-entrar {
+            width: 100%;
+            background-color: #0b5ed7;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-entrar:hover {
+            background-color: #0a58ca;
+        }
+        .link-publico {
+            display: block;
+            margin-top: 20px;
+            color: #0b5ed7;
+            font-size: 13px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card-login">
+        <h1>Casa de Liberación y Restauración</h1>
+        <h2>Acceso solo para Administradores</h2>
+
+        <form id="formLogin">
+            <div class="campo">
+                <label for="usuario">Usuario</label>
+                <input type="text" id="usuario" placeholder="Ej. admin" required>
+            </div>
+            <div class="campo">
+                <label for="clave">Contraseña</label>
+                <input type="password" id="clave" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-entrar">🔐 Iniciar Sesión</button>
+        </form>
+
+        <a href="registro.html" class="link-publico">Ir al Formulario Público de Registro →</a>
+    </div>
+
+    <script src="js/login.js"></script>
+</body>
+</html>

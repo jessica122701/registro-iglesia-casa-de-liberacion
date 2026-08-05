@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Registros - Casa de Liberación</title>
+    
+    <!-- SEGURIDAD: Verifica la sesión de administrador -->
+    <script src="js/auth.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        /* Encabezado */
+        .header-nav {
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-nav h2 {
+            color: #0b5ed7;
+            font-size: 20px;
+        }
+
+        .btn-volver {
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .btn-cerrar {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        /* Contenido Principal */
+        .contenedor-lista {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .filtros-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filtros-card input, .filtros-card select {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .filtros-card input {
+            flex-grow: 1;
+            min-width: 200px;
+        }
+
+        /* Tabla de Registros */
+        .tabla-contenedor {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Insignias / Badges de Tipo */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .badge-miembro { background-color: #dbeafe; color: #1e40af; }
+        .badge-lider { background-color: #fef3c7; color: #92400e; }
+        .badge-nino { background-color: #cff4fc; color: #055160; }
+        .badge-amigo { background-color: #d1e7dd; color: #0f5132; }
+
+        .btn-eliminar {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-eliminar:hover {
+            background-color: #bb2d3b;
+        }
+
+        .sin-datos {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Encabezado Privado -->
+    <header class="header-nav">
+        <h2>📋 Registros de la Iglesia</h2>
+        <div>
+            <a href="dashboard.html" class="btn-volver">← Panel Principal</a>
+            <button onclick="cerrarSesion()" class="btn-cerrar">🚪 Cerrar Sesión</button>
+        </div>
+    </header>
+
+    <main class="contenedor-lista">
+        
+        <!-- Filtros y Búsqueda -->
+        <div class="filtros-card">
+            <input type="text" id="buscador" placeholder="🔍 Buscar por nombre..." onkeyup="filtrarTabla()">
+            <select id="filtroTipo" onchange="filtrarTabla()">
+                <option value="Todos">Todos los Registros</option>
+                <option value="Miembro">Miembros</option>
+                <option value="Lider">Líderes</option>
+                <option value="Nino">Niños / Niñas</option>
+                <option value="Amigo">Amigos / Visitantes</option>
+            </select>
+        </div>
+
+        <!-- Tabla -->
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Nombre</th>
+                        <th>Contacto / Tutor</th>
+                        <th>Nacimiento</th>
+                        <th>Clase / Bautizo</th>
+                        <th>Ministerios / Detalles</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTabla">
+                    <!-- Se llena dinámicamente con JS -->
+                </tbody>
+            </table>
+            <div id="mensajeVacio" class="sin-datos" style="display: none;">
+                No se encontraron personas registradas con ese criterio.
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Script para renderizar y filtrar la tabla -->
+    <script>
+        let registrosGlobales = [];
+
+        function cargarTabla() {
+            registrosGlobales = JSON.parse(localStorage.getItem('registrosIglesia')) || [];
+            renderizarTabla(registrosGlobales);
+        }
+
+        function renderizarTabla(lista) {
+            const cuerpo = document.getElementById('cuerpoTabla');
+            const mensajeVacio = document.getElementById('mensajeVacio');
+            cuerpo.innerHTML = '';
+
+            if (lista.length === 0) {
+                mensajeVacio.style.display = 'block';
+                return;
+            } else {
+                mensajeVacio.style.display = 'none';
+            }
+
+            lista.forEach((item) => {
+                const tr = document.createElement('tr');
+
+                // Badge de tipo
+                let badgeClass = 'badge-miembro';
+                let tipoTexto = item.tipoPersona || 'Miembro';
+                if (item.tipoPersona === 'Lider') badgeClass = 'badge-lider';
+                if (item.tipoPersona === 'Nino') badgeClass = 'badge-nino';
+                if (item.tipoPersona === 'Amigo') badgeClass = 'badge-amigo';
+
+                // Formatear contacto / tutor
+                let contactoInfo = item.telefono;
+                if (item.tipoPersona === 'Nino') {
+                    contactoInfo = `<b>Tutor:</b> ${item.tutor}<br><b>Tel:</b> ${item.telefonoTutor}`;
+                }
+
+                // Formatear ministerios/detalles
+                let detalles = item.ministerios !== 'Ninguno' ? item.ministerios : item.talentos;
+
+                tr.innerHTML = `
+                    <td><span class="badge ${badgeClass}">${tipoTexto}</span></td>
+                    <td><strong>${item.nombre}</strong><br><small style="color:#64748b;">${item.direccion || ''}</small></td>
+                    <td>${contactoInfo}</td>
+                    <td>${item.fechaNacimiento || 'N/A'}</td>
+                    <td>${item.clase}<br><small>Bautizado: ${item.bautizado}</small></td>
+                    <td>${detalles || 'N/A'}</td>
+                    <td>
+                        <button class="btn-eliminar" onclick="eliminarRegistro(${item.id})">🗑️ Eliminar</button>
+                    </td>
+                `;
+                cuerpo.appendChild(tr);
+            });
+        }
+
+        function filtrarTabla() {
+            const textoBuscador = document.getElementById('buscador').value.toLowerCase();
+            const tipoSeleccionado = document.getElementById('filtroTipo').value;
+
+            const resultado = registrosGlobales.filter(item => {
+                const coincideNombre = item.nombre.toLowerCase().includes(textoBuscador);
+                const coincideTipo = (tipoSeleccionado === 'Todos') || (item.tipoPersona === tipoSeleccionado);
+                return coincideNombre && coincideTipo;
+            });
+
+            renderizarTabla(resultado);
+        }
+
+        function eliminarRegistro(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta ficha?')) {
+                registrosGlobales = registrosGlobales.filter(item => item.id !== id);
+                localStorage.setItem('registrosIglesia', JSON.stringify(registrosGlobales));
+                filtrarTabla();
+            }
+        }
+
+        window.onload = cargarTabla;
+    </script>
+</body>
+</html>
