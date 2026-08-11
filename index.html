@@ -12,72 +12,317 @@
 
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
-        body { background-color: #0d1117; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
 
-        .header-main { text-align: center; margin-bottom: 30px; }
-        .brand-title { font-family: 'Cinzel', serif; color: #f1f5f9; font-size: 18px; letter-spacing: 2px; text-transform: uppercase; }
-        .brand-subtitle { font-family: 'Cinzel', serif; color: #d4af37; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; }
-        .brand-divider { width: 80px; height: 1px; background: linear-gradient(90deg, transparent, #d4af37, transparent); margin: 10px auto; border: none; }
+        body { 
+            background-color: #0b0f17; 
+            color: #fff; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-        .container { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 20px; }
+        /* LOGO DE FONDO EN MARCA DE AGUA */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 520px;
+            height: 520px;
+            background-image: url('img/images.jpg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.08;
+            z-index: 0;
+            pointer-events: none;
+        }
 
-        /* SECCIÓN PÚBLICA (Formulario) */
+        .header-main { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            position: relative;
+            z-index: 1;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        /* LOGO SUPERIOR */
+        .brand-logo {
+            width: 85px;
+            height: auto;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+        }
+
+        .brand-title { 
+            font-family: 'Cinzel', serif; 
+            color: #f1f5f9; 
+            font-size: 22px; 
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+            font-weight: 800;
+        }
+
+        .brand-subtitle { 
+            font-family: 'Cinzel', serif; 
+            color: #d4af37; 
+            font-size: 15px; 
+            letter-spacing: 3px; 
+            text-transform: uppercase; 
+            margin-top: 4px;
+        }
+
+        .brand-divider { 
+            width: 100px; 
+            height: 2px; 
+            background: linear-gradient(90deg, transparent, #d4af37, transparent); 
+            margin: 12px auto; 
+            border: none; 
+        }
+
+        .container { 
+            width: 100%; 
+            max-width: 420px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        /* VISTA PÚBLICA */
         .card-publica {
-            background-color: #161b22; border: 2px solid #d4af37; border-radius: 16px;
-            padding: 25px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            background: rgba(22, 27, 34, 0.85); 
+            backdrop-filter: blur(12px);
+            border: 2px solid #d4af37; 
+            border-radius: 16px;
+            padding: 28px 25px; 
+            text-align: center; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .card-publica h2 { font-family: 'Cinzel', serif; color: #d4af37; font-size: 16px; margin-bottom: 10px; }
-        .card-publica p { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+
+        .card-publica:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(212, 175, 55, 0.2);
+        }
+
+        .card-publica h2 { 
+            font-family: 'Cinzel', serif; 
+            color: #d4af37; 
+            font-size: 17px; 
+            margin-bottom: 10px; 
+            letter-spacing: 1px;
+        }
+
+        .card-publica p { font-size: 13px; color: #94a3b8; margin-bottom: 20px; line-height: 1.4; }
+
         .btn-formulario {
-            display: block; width: 100%; background: #d4af37; color: #0d1117;
-            text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 700;
-            font-size: 13px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;
+            display: block; 
+            width: 100%; 
+            background: linear-gradient(135deg, #d4af37, #f3cf65); 
+            color: #0d1117;
+            text-decoration: none; 
+            padding: 13px; 
+            border-radius: 8px; 
+            font-weight: 700;
+            font-size: 13px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
         }
-        .btn-formulario:hover { background: #f3cf65; }
 
-        /* SECCIÓN LOGIN ADMIN */
+        .btn-formulario:hover { 
+            background: linear-gradient(135deg, #f3cf65, #ffffff); 
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+        }
+
         .card-login {
-            background-color: #161b22; border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px; padding: 25px; text-align: center;
+            background: rgba(22, 27, 34, 0.85); 
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; 
+            padding: 25px; 
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
-        .titulo-login { font-family: 'Cinzel', serif; color: #8b949e; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; }
-        .input-login { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(212,175,55,0.2); color: #fff; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 10px; }
-        .btn-login { background: transparent; color: #d4af37; border: 1px solid #d4af37; width: 100%; padding: 10px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; text-transform: uppercase; }
-        .btn-login:hover { background: #d4af37; color: #0d1117; }
-        #mensajeError { font-size: 12px; margin-top: 10px; font-weight: bold; }
 
-        /* PANEL PRIVADO ADMINISTRATIVO (BLOQUEADO POR DEFECTO) */
-        #panelAdminPrivado {
-            display: none; /* <--- No visible para usuarios comunes */
-            width: 100%; max-width: 800px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;
+        .titulo-login { 
+            font-family: 'Cinzel', serif; 
+            color: #94a3b8; 
+            font-size: 13px; 
+            margin-bottom: 18px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
         }
-        .card-admin { background: #161b22; border: 1px solid rgba(212,175,55,0.3); border-radius: 16px; padding: 25px; text-align: center; }
-        .card-admin h3 { font-family: 'Cinzel', serif; color: #fff; font-size: 15px; margin-bottom: 10px; }
-        .card-admin p { font-size: 12px; color: #94a3b8; margin-bottom: 15px; }
-        .btn-admin { display: inline-block; width: 100%; border: 1px solid #d4af37; color: #d4af37; text-decoration: none; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
-        .btn-admin:hover { background: #d4af37; color: #0d1117; }
-        .btn-logout { grid-column: 1 / -1; background: none; border: none; color: #ef4444; cursor: pointer; font-size: 13px; margin-top: 20px; text-decoration: underline; }
+
+        .input-login { 
+            width: 100%; 
+            background: rgba(0,0,0,0.4); 
+            border: 1px solid rgba(212,175,55,0.25); 
+            color: #fff; 
+            padding: 12px; 
+            border-radius: 8px; 
+            font-size: 13px; 
+            margin-bottom: 12px; 
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-login:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-login { 
+            background: transparent; 
+            color: #d4af37; 
+            border: 1px solid #d4af37; 
+            width: 100%; 
+            padding: 12px; 
+            border-radius: 8px; 
+            font-weight: 700; 
+            font-size: 12px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover { 
+            background: #d4af37; 
+            color: #0d1117; 
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        #mensajeError { font-size: 12px; margin-top: 12px; font-weight: bold; color: #f87171; }
+
+        /* PANEL PRIVADO */
+        #panelAdminPrivado {
+            display: none; 
+            width: 100%; 
+            max-width: 850px; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 22px;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .card-admin { 
+            background: rgba(22, 27, 34, 0.85); 
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212,175,55,0.25); 
+            border-radius: 16px; 
+            padding: 28px 20px; 
+            text-align: center; 
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-admin:hover {
+            transform: translateY(-6px);
+            border-color: #d4af37;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .card-admin-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .card-admin h3 { 
+            font-family: 'Cinzel', serif; 
+            color: #fff; 
+            font-size: 16px; 
+            margin-bottom: 8px; 
+            letter-spacing: 1px;
+        }
+
+        .card-admin p { font-size: 12px; color: #94a3b8; margin-bottom: 20px; line-height: 1.4; }
+
+        .btn-admin { 
+            display: inline-block; 
+            width: 100%; 
+            border: 1px solid #d4af37; 
+            color: #d4af37; 
+            text-decoration: none; 
+            padding: 10px; 
+            border-radius: 8px; 
+            font-size: 12px; 
+            font-weight: 700; 
+            transition: all 0.3s;
+        }
+
+        .btn-admin:hover { 
+            background: #d4af37; 
+            color: #0d1117; 
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-logout { 
+            grid-column: 1 / -1; 
+            background: none; 
+            border: none; 
+            color: #ef4444; 
+            cursor: pointer; 
+            font-size: 13px; 
+            margin-top: 10px; 
+            text-decoration: underline; 
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .btn-logout:hover {
+            color: #f87171;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
     <header class="header-main">
+        <img src="img/images.jpg" alt="Logo Asambleas de Dios" class="brand-logo" onerror="this.style.display='none'">
         <div class="brand-title">Casa de Liberación</div>
         <div class="brand-divider"></div>
         <div class="brand-subtitle">y Restauración</div>
     </header>
 
-    <!-- VISTA INICIAL PÚBLICA -->
+    <!-- VISTA PÚBLICA -->
     <div id="vistaPublica" class="container">
-        
-        <!-- ÚNICO ACCESO PÚBLICO LIBRE -->
         <section class="card-publica">
             <h2>📝 Registro de Miembros</h2>
             <p>Completa el formulario de ingreso o actualización de datos.</p>
             <a href="registro.html" class="btn-formulario">Llenar Formulario ✍️</a>
         </section>
 
-        <!-- ACCESO RESTRINGIDO PARA ADMINISTRADORES -->
         <section class="card-login">
             <h3 class="titulo-login">🔒 Acceso Privado (Administración)</h3>
             <form id="formLogin" onsubmit="return false;">
@@ -87,34 +332,40 @@
                 <div id="mensajeError"></div>
             </form>
         </section>
-
     </div>
 
-    <!-- VISTA PRIVADA (SOLO ADMINISTRADORES TRAS INICIAR SESIÓN) -->
+    <!-- VISTA PRIVADA -->
     <main id="panelAdminPrivado">
         <section class="card-admin">
-            <h3>📊 Dashboard</h3>
-            <p>Estadísticas y reportes de la iglesia.</p>
+            <div>
+                <span class="card-admin-icon">📊</span>
+                <h3>Dashboard</h3>
+                <p>Estadísticas generales y reportes de la iglesia.</p>
+            </div>
             <a href="dashboard.html" class="btn-admin">Acceder a Estadísticas ➔</a>
         </section>
 
         <section class="card-admin">
-            <h3>👥 Directorio</h3>
-            <p>Consulta la lista privada de miembros.</p>
+            <div>
+                <span class="card-admin-icon">👥</span>
+                <h3>Directorio</h3>
+                <p>Consulta y edición privada de la lista de miembros.</p>
+            </div>
             <a href="miembros.html" class="btn-admin">Acceder al Directorio ➔</a>
         </section>
 
-    
         <section class="card-admin">
-            <h3>🏛️ Administrativo</h3>
-            <p>Gestión privada y control administrativo.</p>
+            <div>
+                <span class="card-admin-icon">🏛️</span>
+                <h3>Administrativo</h3>
+                <p>Gestión financiera y control administrativo interno.</p>
+            </div>
             <a href="contabilidad.html" class="btn-admin">Acceder a Administrativo ➔</a>
         </section>
 
         <button class="btn-logout" id="btnLogout">🔒 Cerrar Sesión Privada</button>
     </main>
 
-    <!-- Agregamos ?v=2 para forzar a Chrome a leer el archivo nuevo -->
     <script type="module" src="js/index.js?v=3"></script>
 </body>
-</html
+</html>

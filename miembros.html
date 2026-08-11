@@ -1,182 +1,289 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <script src="js/auth.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Registros - Casa de Liberación</title>
-    
-    <script src="js/auth.js"></script>
-
+    <title>Control de Membresía - Casa de Liberación</title>
+    <!-- Librería para exportar a Excel (SheetJS) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
-        * { 
-            box-sizing: border-box; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-        }
-        body { 
-            background-color: #f4f6f9; 
-            color: #333; 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        body {
+            background-color: #f1f5f9;
+            color: #334155;
+        }
+
+        /* HEADER SUPERIOR */
         .header-nav {
-            background-color: #ffffff; 
-            display: flex; 
+            background-color: #111111;
+            color: #ffffff;
+            padding: 15px 30px;
+            display: flex;
             justify-content: space-between;
-            align-items: center; 
-            padding: 15px 30px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            position: sticky; 
-            top: 0; 
-            z-index: 100;
+            align-items: center;
+            border-bottom: 3px solid #d97706;
         }
 
-        .header-nav h2 { 
-            color: #0b5ed7; 
-            font-size: 20px; 
-        }
-        .btn-volver { 
-            background-color: #6c757d; 
-            color: white; 
-            text-decoration: none; 
-            padding: 8px 15px; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            font-size: 14px; 
-        }
-        .btn-cerrar { 
-            background-color: #dc3545; 
-            color: white; 
-            border: none; 
-            padding: 8px 15px; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            font-size: 14px; 
-            cursor: pointer; 
-            margin-left: 10px; 
+        .header-title h2 {
+            font-size: 20px;
+            color: #fbbf24;
+            font-weight: bold;
         }
 
-        .contenedor-lista { 
-            max-width: 1250px; 
-            margin: 30px auto; 
-            padding: 0 20px; 
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-nav {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+
+        .btn-volver { background-color: #374151; color: white; }
+        .btn-cerrar { background-color: #ef4444; color: white; }
+
+        /* CONTENEDOR PRINCIPAL */
+        .contenedor-lista {
+            max-width: 1100px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        /* FILTROS Y BOTONES DE EXPORTAR */
+        .acciones-superiores {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .filtros-card {
-            background: #ffffff; 
-            padding: 20px; 
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .filtros-card input, .filtros-card select {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            background-color: #ffffff;
+        }
+
+        .filtros-card input { flex: 1; }
+
+        .botones-exportar {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-imprimir {
+            background-color: #0284c7;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-excel {
+            background-color: #15803d;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* TABLA DE MIEMBROS */
+        .tabla-contenedor {
+            background-color: #ffffff;
             border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
-            margin-bottom: 20px;
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 15px; 
-            align-items: center; 
-            justify-content: space-between;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        .filtros-card input, .filtros-card select { 
-            padding: 10px; 
-            border: 1px solid #cbd5e1; 
-            border-radius: 6px; 
-            font-size: 14px; 
-            outline: none; 
-        }
-        .filtros-card input { 
-            flex-grow: 1; 
-            min-width: 200px; 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
         }
 
-        .tabla-contenedor { 
-            background: #ffffff; 
-            border-radius: 10px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
-            overflow-x: auto; 
-        }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            text-align: left; 
-            font-size: 14px; 
-        }
-        th, td { 
-            padding: 12px 15px; 
-            border-bottom: 1px solid #e2e8f0; 
-        }
-        th { 
-            background-color: #f8fafc; 
-            color: #475569; 
-            font-weight: bold; 
-        }
-        tr:hover { 
-            background-color: #f1f5f9; 
+        thead {
+            background-color: #111111;
+            color: #ffffff;
         }
 
-        .badge { 
-            padding: 4px 8px; 
-            border-radius: 12px; 
-            font-size: 12px; 
-            font-weight: bold; 
-            display: inline-block; 
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
         }
-        .badge-miembro { background-color: #dbeafe; color: #1e40af; }
-        .badge-lider { background-color: #fef3c7; color: #92400e; }
-        .badge-nino { background-color: #cff4fc; color: #055160; }
-        .badge-amigo { background-color: #d1e7dd; color: #0f5132; }
 
-        .btn-editar { 
-            background-color: #0d6efd; 
-            color: white; 
-            border: none; 
-            padding: 6px 10px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-size: 12px; 
-            margin-right: 5px; 
-            font-weight: bold; 
+        tbody tr:hover {
+            background-color: #f8fafc;
         }
-        .btn-eliminar { 
-            background-color: #dc3545; 
-            color: white; 
-            border: none; 
-            padding: 6px 10px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-size: 12px; 
+
+        /* BADGES / ETIQUETAS */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
         }
-        .sin-datos { 
-            text-align: center; 
-            padding: 30px; 
-            color: #64748b; 
+        .badge-miembro { background-color: #e0f2fe; color: #0369a1; }
+        .badge-lider { background-color: #fef3c7; color: #b45309; }
+        .badge-amigo { background-color: #f3e8ff; color: #6b21a8; }
+        .badge-nino { background-color: #dcfce7; color: #15803d; }
+
+        .btn-editar {
+            background-color: #f59e0b;
+            color: #111;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* MODAL / VENTANA FLOTANTE DE EDICIÓN */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-top: 5px solid #d97706;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #111;
+        }
+
+        .form-modal-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .form-modal-grupo label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .form-modal-grupo input, .form-modal-grupo select {
+            padding: 9px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .modal-acciones {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-guardar-modal {
+            background-color: #d97706;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-cancelar-modal {
+            background-color: #94a3b8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        @media print {
+            .header-nav, .acciones-superiores, .btn-editar, .modal-overlay {
+                display: none !important;
+            }
+            .contenedor-lista { max-width: 100%; margin: 0; padding: 0; }
         }
     </style>
 </head>
 <body>
 
     <header class="header-nav">
-        <h2>📋 Control de Membresía y Crecimiento</h2>
-        <div>
-            <a href="dashboard.html" class="btn-volver">← Panel Principal</a>
-            <button onclick="cerrarSesion()" class="btn-cerrar">🚪 Cerrar Sesión</button>
+        <div class="header-title">
+            <h2>📑 Control de Membresía y Crecimiento</h2>
+        </div>
+        <div class="header-buttons">
+            <a href="dashboard.html" class="btn-nav btn-volver">← Panel Principal</a>
+            <button onclick="cerrarSesion()" class="btn-nav btn-cerrar">🚪 Cerrar Sesión</button>
         </div>
     </header>
 
     <main class="contenedor-lista">
-        
-        <div class="filtros-card">
-            <input type="text" id="buscador" placeholder="🔍 Buscar por nombre..." onkeyup="filtrarTabla()">
-            <select id="filtroTipo" onchange="filtrarTabla()">
-                <option value="Todos">Todos los Registros</option>
-                <option value="Miembro">Miembros</option>
-                <option value="Lider">Líderes</option>
-                <option value="Nino">Niños / Niñas</option>
-                <option value="Amigo">Amigos / Visitantes</option>
-            </select>
+
+        <div class="acciones-superiores">
+            <div class="filtros-card">
+                <input type="text" id="buscador" placeholder="🔍 Buscar por nombre...">
+                <select id="filtroTipo" onchange="filtrarTabla()">
+                    <option value="Todos">Todos los Registros</option>
+                    <option value="Miembro">Miembros</option>
+                    <option value="Lider">Líderes</option>
+                    <option value="Nino">Niños / Niñas</option>
+                    <option value="Amigo">Amigos / Visitantes</option>
+                </select>
+            </div>
+
+            <div class="botones-exportar">
+                <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir Lista</button>
+                <button class="btn-excel" onclick="exportarExcelMiembros()">📊 Descargar Excel</button>
+            </div>
         </div>
 
         <div class="tabla-contenedor">
-            <table>
+            <table id="tablaMiembros">
                 <thead>
                     <tr>
                         <th>Tipo</th>
@@ -188,95 +295,255 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody id="cuerpoTabla"></tbody>
+                <tbody id="tablaMiembrosCuerpo">
+                    <tr>
+                        <td colspan="7" style="text-align: center;">⏳ Cargando miembros de Firebase...</td>
+                    </tr>
+                </tbody>
             </table>
-            <div id="mensajeVacio" class="sin-datos" style="display: none;">
-                No se encontraron personas registradas.
-            </div>
         </div>
 
     </main>
 
-    <script>
-        let registrosGlobales = [];
+    <!-- VENTANA MODAL PARA EDITAR / AVANZAR MIEMBRO -->
+    <div class="modal-overlay" id="modalEditar">
+        <div class="modal-content">
+            <h3>✏️ Actualizar / Avanzar Miembro</h3>
+            <form id="formEditarMiembro">
+                <input type="hidden" id="editId">
 
-        function cargarTabla() {
-            registrosGlobales = JSON.parse(localStorage.getItem('registrosIglesia')) || [];
-            renderizarTabla(registrosGlobales);
-        }
+                <div class="form-modal-grupo">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="editNombre" required>
+                </div>
 
-        function renderizarTabla(lista) {
-            const cuerpo = document.getElementById('cuerpoTabla');
-            const mensajeVacio = document.getElementById('mensajeVacio');
-            cuerpo.innerHTML = '';
+                <div class="form-modal-grupo">
+                    <label>Categoría / Rol (Avanzar Crecimiento)</label>
+                    <select id="editTipoPersona">
+                        <option value="Amigo / Visitante">Amigo / Visitante</option>
+                        <option value="Miembro">Miembro</option>
+                        <option value="Líder">Líder</option>
+                        <option value="Niño / Niña">Niño / Niña</option>
+                    </select>
+                </div>
 
-            if (lista.length === 0) {
-                mensajeVacio.style.display = 'block';
-                return;
-            } else {
-                mensajeVacio.style.display = 'none';
-            }
+                <div class="form-modal-grupo">
+                    <label>Teléfono / Contacto</label>
+                    <input type="text" id="editTelefono">
+                </div>
 
-            lista.forEach((item) => {
-                const tr = document.createElement('tr');
+                <div class="form-modal-grupo">
+                    <label>Clase de Crecimiento Actual</label>
+                    <input type="text" id="editClase" placeholder="Ej: Doctrinas Básicas, Discipulado...">
+                </div>
 
-                let badgeClass = 'badge-miembro';
-                let tipoTexto = item.tipoPersona || 'Miembro';
-                if (item.tipoPersona === 'Lider') badgeClass = 'badge-lider';
-                if (item.tipoPersona === 'Nino') badgeClass = 'badge-nino';
-                if (item.tipoPersona === 'Amigo') badgeClass = 'badge-amigo';
+                <div class="form-modal-grupo">
+                    <label>¿Está Bautizado/a?</label>
+                    <select id="editBautizado">
+                        <option value="No">No</option>
+                        <option value="Sí">Sí</option>
+                    </select>
+                </div>
 
-                let contactoInfo = item.telefono || 'N/A';
-                if (item.tipoPersona === 'Nino') {
-                    contactoInfo = `<b>Tutor:</b> ${item.tutor || 'N/A'}<br><b>Tel:</b> ${item.telefonoTutor || 'N/A'}`;
+                <div class="form-modal-grupo">
+                    <label>Ministerios / Talentos</label>
+                    <input type="text" id="editMinisterios" placeholder="Ej: Alabanza, Intercesión, Protocolo...">
+                </div>
+
+                <div class="modal-acciones">
+                    <button type="button" class="btn-cancelar-modal" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn-guardar-modal">💾 Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE FIREBASE, EDICIÓN Y EXPORTAR -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyAUWrwigD3-pekHIkzRjtgdadLDo6zK9rY",
+          authDomain: "casa-de-liberacion.firebaseapp.com",
+          projectId: "casa-de-liberacion",
+          storageBucket: "casa-de-liberacion.firebasestorage.app",
+          messagingSenderId: "25263770195",
+          appId: "1:25263770195:web:15c4f6965eb773f0d414a6",
+          measurementId: "G-JYWMNFRNWL"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let miembrosArray = [];
+
+        async function cargarListaMiembros() {
+            const tablaCuerpo = document.getElementById("tablaMiembrosCuerpo");
+            if (!tablaCuerpo) return;
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "miembros"));
+                miembrosArray = [];
+                tablaCuerpo.innerHTML = "";
+
+                if (querySnapshot.empty) {
+                    tablaCuerpo.innerHTML = `<tr><td colspan="7" style="text-align: center;">No hay registros guardados en Firebase.</td></tr>`;
+                    return;
                 }
 
-                let detalles = item.ministerios !== 'Ninguno' ? item.ministerios : item.talentos;
+                querySnapshot.forEach((docSnapshot) => {
+                    const data = docSnapshot.data();
+                    const item = { id: docSnapshot.id, ...data };
+                    miembrosArray.push(item);
+                    renderizarFila(item, tablaCuerpo);
+                });
 
-                tr.innerHTML = `
-                    <td><span class="badge ${badgeClass}">${tipoTexto}</span></td>
-                    <td><strong>${item.nombre}</strong><br><small style="color:#64748b;">${item.direccion || ''}</small></td>
-                    <td>${contactoInfo}</td>
-                    <td>📅 ${item.fechaRegistro || 'N/A'}</td>
-                    <td><b>${item.clase || 'Ninguna'}</b><br><small>Bautizado: ${item.bautizado || 'No'}</small></td>
-                    <td>${detalles || 'N/A'}</td>
-                    <td>
-                        <button class="btn-editar" onclick="editarRegistro(${item.id})">✏️ Editar / Avanzar</button>
-                        <button class="btn-eliminar" onclick="eliminarRegistro(${item.id})">🗑️</button>
-                    </td>
-                `;
-                cuerpo.appendChild(tr);
-            });
+            } catch (error) {
+                console.error("Error al obtener lista de miembros:", error);
+                tablaCuerpo.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Error al conectar con la base de datos.</td></tr>`;
+            }
         }
 
-        function filtrarTabla() {
-            const textoBuscador = document.getElementById('buscador').value.toLowerCase();
-            const tipoSeleccionado = document.getElementById('filtroTipo').value;
+        function renderizarFila(data, contenedor) {
+            const tipo = (data.tipoPersona || 'Miembro').toLowerCase();
+            
+            let badgeClass = "badge-miembro";
+            if (tipo.includes('lider') || tipo.includes('líder')) badgeClass = "badge-lider";
+            else if (tipo.includes('amigo') || tipo.includes('visitante')) badgeClass = "badge-amigo";
+            else if (tipo.includes('nino') || tipo.includes('niño') || tipo.includes('niña')) badgeClass = "badge-nino";
 
-            const resultado = registrosGlobales.filter(item => {
-                const coincideNombre = item.nombre.toLowerCase().includes(textoBuscador);
-                const coincideTipo = (tipoSeleccionado === 'Todos') || (item.tipoPersona === tipoSeleccionado);
+            let contactoTutor = data.telefono || '-';
+            if (data.tutor) {
+                contactoTutor = `<strong>Tutor:</strong> ${data.tutor}<br><small>Tel: ${data.telefono || 'N/A'}</small>`;
+            }
+
+            const direccionText = data.direccion ? `<br><small style="color: #64748b;">${data.direccion}</small>` : '';
+
+            const fila = `
+                <tr>
+                    <td><span class="badge ${badgeClass}">${data.tipoPersona || 'Miembro'}</span></td>
+                    <td>
+                        <strong>${data.nombre || '-'}</strong>
+                        ${direccionText}
+                    </td>
+                    <td>${contactoTutor}</td>
+                    <td>📅 ${data.fechaRegistro || '-'}</td>
+                    <td>
+                        <strong>Clase:</strong> ${data.clase || 'Doctrina'}<br>
+                        <small>Bautizado: ${data.bautizado || 'No'}</small>
+                    </td>
+                    <td>${data.ministerios || data.talentos || 'N/A'}</td>
+                    <td>
+                        <button class="btn-editar" onclick="abrirEdicion('${data.id}')">✏️ Editar / Avanzar</button>
+                    </td>
+                </tr>
+            `;
+            contenedor.innerHTML += fila;
+        }
+
+        // Abrir Modal con los datos actuales
+        window.abrirEdicion = function(id) {
+            const item = miembrosArray.find(m => m.id === id);
+            if (!item) return;
+
+            document.getElementById("editId").value = item.id;
+            document.getElementById("editNombre").value = item.nombre || "";
+            document.getElementById("editTipoPersona").value = item.tipoPersona || "Miembro";
+            document.getElementById("editTelefono").value = item.telefono || "";
+            document.getElementById("editClase").value = item.clase || "";
+            document.getElementById("editBautizado").value = item.bautizado || "No";
+            document.getElementById("editMinisterios").value = item.ministerios || item.talentos || "";
+
+            document.getElementById("modalEditar").style.display = "flex";
+        };
+
+        window.cerrarModal = function() {
+            document.getElementById("modalEditar").style.display = "none";
+        };
+
+        // Guardar Edición en Firebase
+        document.getElementById("formEditarMiembro").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const id = document.getElementById("editId").value;
+
+            try {
+                const docRef = doc(db, "miembros", id);
+                await updateDoc(docRef, {
+                    nombre: document.getElementById("editNombre").value,
+                    tipoPersona: document.getElementById("editTipoPersona").value,
+                    telefono: document.getElementById("editTelefono").value,
+                    clase: document.getElementById("editClase").value,
+                    bautizado: document.getElementById("editBautizado").value,
+                    ministerios: document.getElementById("editMinisterios").value
+                });
+
+                alert("¡Registro actualizado exitosamente!");
+                cerrarModal();
+                cargarListaMiembros();
+            } catch (error) {
+                console.error("Error al actualizar:", error);
+                alert("Ocurrió un error al intentar actualizar el registro.");
+            }
+        });
+
+        // Filtro por nombre y tipo
+        window.filtrarTabla = function() {
+            const busqueda = (document.getElementById("buscador")?.value || "").toLowerCase();
+            const filtroTipo = (document.getElementById("filtroTipo")?.value || "Todos").toLowerCase();
+            const tablaCuerpo = document.getElementById("tablaMiembrosCuerpo");
+
+            if (!tablaCuerpo) return;
+            tablaCuerpo.innerHTML = "";
+
+            const filtrados = miembrosArray.filter(m => {
+                const coincideNombre = (m.nombre && m.nombre.toLowerCase().includes(busqueda));
+                const tipoPersona = (m.tipoPersona || "").toLowerCase();
+                
+                let coincideTipo = true;
+                if (filtroTipo !== "todos") {
+                    coincideTipo = tipoPersona.includes(filtroTipo);
+                }
+
                 return coincideNombre && coincideTipo;
             });
 
-            renderizarTabla(resultado);
-        }
-
-        function editarRegistro(id) {
-            localStorage.setItem('editarRegistroId', id);
-            window.location.href = 'registro.html';
-        }
-
-        function eliminarRegistro(id) {
-            if (confirm('¿Estás seguro de que deseas eliminar este registro?')) {
-                registrosGlobales = registrosGlobales.filter(item => item.id !== id);
-                localStorage.setItem('registrosIglesia', JSON.stringify(registrosGlobales));
-                filtrarTabla();
+            if (filtrados.length === 0) {
+                tablaCuerpo.innerHTML = `<tr><td colspan="7" style="text-align: center;">No se encontraron coincidencias.</td></tr>`;
+                return;
             }
-        }
 
-        window.onload = cargarTabla;
+            filtrados.forEach(m => renderizarFila(m, tablaCuerpo));
+        };
+
+        // Exportar la lista de miembros a Excel
+        window.exportarExcelMiembros = function() {
+            const tabla = document.getElementById("tablaMiembros");
+            const tablaCopia = tabla.cloneNode(true);
+            const filas = tablaCopia.rows;
+            
+            for (let i = 0; i < filas.length; i++) {
+                if (filas[i].cells.length > 6) {
+                    filas[i].deleteCell(6);
+                }
+            }
+
+            const libro = XLSX.utils.table_to_book(tablaCopia, { sheet: "Miembros" });
+            XLSX.writeFile(libro, "Lista_Miembros_Casa_de_Liberacion.xlsx");
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarListaMiembros();
+            const buscadorInput = document.getElementById("buscador");
+            if (buscadorInput) {
+                buscadorInput.addEventListener("input", window.filtrarTabla);
+            }
+        });
+
+        window.cerrarSesion = function() {
+            localStorage.removeItem('esAdmin');
+            window.location.href = 'registro.html';
+        };
     </script>
-    <script src="js/miembros.js"></script>
 </body>
 </html>
