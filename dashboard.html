@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -52,7 +52,7 @@
         .card-stat .valor { font-size: 28px; font-weight: 800; color: #0f172a; }
 
         /* SECCIÓN ACCIONES RÁPIDAS */
-        .seccion-acciones { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .seccion-acciones { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 35px; }
         .seccion-acciones h2 { font-size: 18px; color: #0f172a; margin-bottom: 20px; font-weight: 700; }
         
         .grid-acciones { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
@@ -65,6 +65,23 @@
         .btn-accion:hover { border-color: #d4af37; background: #fff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
         .btn-accion.contabilidad { border-color: rgba(139, 92, 246, 0.4); color: #6d28d9; }
         .btn-accion.contabilidad:hover { background: #f5f3ff; border-color: #8b5cf6; }
+
+        /* SECCIÓN Y ESTILOS DE LA TABLA ORGANIZADA */
+        .seccion-tabla { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .seccion-tabla h2 { font-size: 18px; color: #0f172a; margin-bottom: 15px; font-weight: 700; }
+        .contenedor-tabla { overflow-x: auto; }
+        
+        .tabla-miembros { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .tabla-miembros th { background-color: #0f172a; color: #ffffff; text-align: left; padding: 12px; font-size: 14px; border-bottom: 2px solid #d4af37; }
+        .tabla-miembros td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #334155; }
+        .tabla-miembros tr:hover { background-color: #f8fafc; }
+        
+        /* ETIQUETAS DE TIPO DE PERSONA */
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; }
+        .badge-miembro { background: #dbeafe; color: #1e40af; }
+        .badge-lider { background: #fef9c3; color: #854d0e; }
+        .badge-amigo { background: #dcfce7; color: #166534; }
+        .badge-nino { background: #cff4fc; color: #055160; }
     </style>
 </head>
 <body>
@@ -105,7 +122,7 @@
             </div>
         </div>
 
-        <!-- ACCIONES RÁPIDAS (AHORA INCLUYE CONTABILIDAD) -->
+        <!-- ACCIONES RÁPIDAS -->
         <div class="seccion-acciones">
             <h2>Acciones Rápidas</h2>
             <div class="grid-acciones">
@@ -121,50 +138,121 @@
             </div>
         </div>
 
+        <!-- TABLA ORGANIZADA DE REGISTROS DE FIREBASE -->
+        <div class="seccion-tabla">
+            <h2>📋 Registros en la Base de Datos</h2>
+            <div class="contenedor-tabla">
+                <table class="tabla-miembros">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Teléfono</th>
+                            <th>Dirección</th>
+                            <th>Detalles / Ministerios</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaCuerpo">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #64748b;">⏳ Cargando registros de Firebase...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
-    <!-- SCRIPT INTEGRADOR PARA CONTEO Y CERRAR SESIÓN -->
-    <script>
-        function cargarContadoresDashboard() {
-            // Lee todas las posibles claves por retrocompatibilidad
-            const registros = JSON.parse(localStorage.getItem('registrosIglesia')) || 
-                              JSON.parse(localStorage.getItem('misRegistros')) || 
-                              JSON.parse(localStorage.getItem('registros')) || [];
+    <!-- SCRIPT DE FIREBASE PARA CARGAR DATOS Y TABLA -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-            // Total general de registros
-            const total = registros.length;
+        const firebaseConfig = {
+          apiKey: "AIzaSyAUWrwigD3-pekHIkzRjtgdadLDo6zK9rY",
+          authDomain: "casa-de-liberacion.firebaseapp.com",
+          projectId: "casa-de-liberacion",
+          storageBucket: "casa-de-liberacion.firebasestorage.app",
+          messagingSenderId: "25263770195",
+          appId: "1:25263770195:web:15c4f6965eb773f0d414a6",
+          measurementId: "G-JYWMNFRNWL"
+        };
 
-            // Filtro flexible para Líderes
-            const lideres = registros.filter(r => {
-                const tipo = (r.tipoPersona || '').toLowerCase();
-                return tipo === 'lider' || tipo === 'líder';
-            }).length;
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-            // Filtro flexible para Niños
-            const ninos = registros.filter(r => {
-                const tipo = (r.tipoPersona || '').toLowerCase();
-                return tipo === 'nino' || tipo === 'niño' || tipo === 'niños' || tipo === 'niña';
-            }).length;
+        async function cargarDatosDashboard() {
+            const tablaCuerpo = document.getElementById("tablaCuerpo");
 
-            // Filtro flexible para Amigos / Visitantes
-            const amigos = registros.filter(r => {
-                const tipo = (r.tipoPersona || '').toLowerCase();
-                return tipo === 'amigo' || tipo === 'visitante' || tipo === 'amigos';
-            }).length;
+            try {
+                const querySnapshot = await getDocs(collection(db, "miembros"));
+                
+                let total = 0;
+                let lideres = 0;
+                let ninos = 0;
+                let amigos = 0;
 
-            // Renderizar datos en las tarjetas
-            if(document.getElementById('totalPersonas')) document.getElementById('totalPersonas').textContent = total;
-            if(document.getElementById('totalLideres')) document.getElementById('totalLideres').textContent = lideres;
-            if(document.getElementById('totalNinos')) document.getElementById('totalNinos').textContent = ninos;
-            if(document.getElementById('totalAmigos')) document.getElementById('totalAmigos').textContent = amigos;
+                tablaCuerpo.innerHTML = "";
+
+                if (querySnapshot.empty) {
+                    tablaCuerpo.innerHTML = `<tr><td colspan="6" style="text-align: center;">No hay registros guardados en Firebase aún.</td></tr>`;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    total++;
+
+                    const tipo = (data.tipoPersona || '').toLowerCase();
+
+                    // Conteo según categoría
+                    if (tipo.includes('lider') || tipo.includes 'líder') lideres++;
+                    else if (tipo.includes('nino') || tipo.includes('niño') || tipo.includes('niña')) ninos++;
+                    else if (tipo.includes('amigo') || tipo.includes('visitante')) amigos++;
+
+                    // Badge de color según el tipo
+                    let badgeClass = "badge-miembro";
+                    if (tipo.includes('lider') || tipo.includes('líder')) badgeClass = "badge-lider";
+                    else if (tipo.includes('amigo') || tipo.includes('visitante')) badgeClass = "badge-amigo";
+                    else if (tipo.includes('nino') || tipo.includes('niño') || tipo.includes('niña')) badgeClass = "badge-nino";
+
+                    // Formatear detalles
+                    let detalles = "-";
+                    if (data.tutor) detalles = `<strong>Tutor:</strong> ${data.tutor}`;
+                    else if (data.ministerios) detalles = `<strong>Min:</strong> ${data.ministerios}`;
+
+                    // Insertar fila en la tabla
+                    const fila = `
+                        <tr>
+                            <td>${data.fechaRegistro || '-'}</td>
+                            <td><strong>${data.nombre || '-'}</strong></td>
+                            <td><span class="badge ${badgeClass}">${data.tipoPersona || 'Miembro'}</span></td>
+                            <td>${data.telefono || '-'}</td>
+                            <td>${data.direccion || '-'}</td>
+                            <td>${detalles}</td>
+                        </tr>
+                    `;
+                    tablaCuerpo.innerHTML += fila;
+                });
+
+                // Actualizar contadores superiores
+                document.getElementById('totalPersonas').textContent = total;
+                document.getElementById('totalLideres').textContent = lideres;
+                document.getElementById('totalNinos').textContent = ninos;
+                document.getElementById('totalAmigos').textContent = amigos;
+
+            } catch (error) {
+                console.error("Error al obtener datos de Firebase:", error);
+                tablaCuerpo.innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Error al conectar con la base de datos.</td></tr>`;
+            }
         }
 
-        function cerrarSesion() {
+        window.cerrarSesion = function() {
             localStorage.removeItem('esAdmin');
             window.location.href = 'registro.html';
-        }
+        };
 
-        document.addEventListener('DOMContentLoaded', cargarContadoresDashboard);
+        document.addEventListener('DOMContentLoaded', cargarDatosDashboard);
     </script>
 </body>
 </html>

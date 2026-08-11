@@ -308,6 +308,12 @@
                 <button type="button" onclick="reiniciarFormulario()" style="background-color: #0b5ed7; color: white; border: none; padding: 12px 22px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px;">
                     ➕ Llenar otro formulario
                 </button>
+             
+    <!-- AGREGAS ESTE BOTÓN AQUÍ ABAJO -->
+    <button type="button" onclick="salirDelSistema()" style="background-color: #64748b; color: white; border: none; padding: 12px 22px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px;">
+        🚪 Salir
+    </button>
+</div>
             </div>
         </div>
     </div>
@@ -500,6 +506,15 @@
                 alert("Contraseña incorrecta.");
             }
         }
+        function salirDelSistema() {
+    // Intenta cerrar la pestaña actual
+    window.close();
+    
+    // Si el navegador impide cerrar la pestaña por seguridad, redirige fuera
+    setTimeout(() => {
+        window.location.href = "https://www.google.com";
+    }, 300);
+}
     </script>
 </body>
 </html>
