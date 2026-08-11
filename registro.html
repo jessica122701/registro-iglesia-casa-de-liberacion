@@ -212,7 +212,7 @@
 
                 <div class="grid-2">
                     <div class="campo-grupo" id="campoCorreo">
-                        <label>✉️ Correo Electrónico</label>
+                        <label>✉️ Correo Electrónico (Opcional)</label>
                         <input type="email" id="correo" name="Correo" placeholder="correo@ejemplo.com">
                     </div>
                     <div class="campo-grupo" id="campoDireccion">
@@ -224,23 +224,16 @@
 
             <!-- SECCIÓN EXCLUSIVA PARA NIÑOS -->
             <div id="seccionTutor" class="seccion-card oculto">
-                <div class="seccion-titulo">👨‍👩‍👧 Datos del Tutor o Madre</div>
+                <div class="seccion-titulo">👨‍👩‍👧 Datos del Tutor / Madre / Padre</div>
                 <div class="grid-2">
                     <div class="campo-grupo">
-                        <label>Nombre del Tutor / Madre *</label>
-                        <input type="text" id="tutor" name="Tutor" placeholder="Nombre de la madre o responsable">
+                        <label>Nombre del Tutor / Madre / Padre *</label>
+                        <input type="text" id="tutor" name="Tutor" placeholder="Nombre del padre, madre o tutor">
                     </div>
                     <div class="campo-grupo">
                         <label>Teléfono del Tutor *</label>
                         <input type="tel" id="telefonoTutor" name="Teléfono Tutor" placeholder="Ej. 809-000-0000">
                     </div>
-                </div>
-                <div class="campo-grupo" style="margin-top: 10px;">
-                    <label>¿Pertenece al Ministerio de Niños / Va a las reuniones?</label>
-                    <select id="asisteMinNinos">
-                        <option value="Sí">Sí, asiste</option>
-                        <option value="No">No asiste aún</option>
-                    </select>
                 </div>
             </div>
 
@@ -297,7 +290,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-guardar">💾 Guardar Ficha</button>
+            <button type="submit" class="btn-guardar" id="btnSubmit">💾 Guardar Ficha</button>
         </form>
     </div>
 
@@ -314,9 +307,6 @@
             <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
                 <button type="button" onclick="reiniciarFormulario()" style="background-color: #0b5ed7; color: white; border: none; padding: 12px 22px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px;">
                     ➕ Llenar otro formulario
-                </button>
-                <button type="button" onclick="salirOInicio()" style="background-color: #64748b; color: white; border: none; padding: 12px 22px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px;">
-                    🚪 Salir
                 </button>
             </div>
         </div>
@@ -335,6 +325,29 @@
         </div>
     </div>
 
+    <!-- CONEXIÓN Y MODULO FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+    const firebaseConfig = {
+  apiKey: "AIzaSyAUWrwigD3-pekHIkzRjtgdadlDo6zK9rY",
+  authDomain: "casa-de-liberacion.firebaseapp.com",
+  projectId: "casa-de-liberacion",
+  storageBucket: "casa-de-liberacion.firebasestorage.app",
+  messagingSenderId: "25263770195",
+  appId: "1:25263770195:web:15c4f6965eb773f0d414a6",
+  measurementId: "G-JYWMNFRNWL"
+};
+    
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.collection = collection;
+        window.addDoc = addDoc;
+    </script>
+
+    <!-- LÓGICA DE INTERFAZ Y VISIBILIDAD DE CAMPOS -->
     <script>
         const URL_DASHBOARD = 'dashboard.html';
 
@@ -350,92 +363,105 @@
             if (btnAreaAdmin) {
                 btnAreaAdmin.addEventListener("click", irAreaAdministrativa);
             }
-
-            // Permite presionar Enter en el input de clave de admin
-            document.getElementById("inputClaveAdmin").addEventListener("keypress", function(e) {
-                if (e.key === "Enter") {
-                    e.preventDefault();
-                    procesarLogin();
-                }
-            });
         });
-
-        function irAreaAdministrativa() {
-            const esAdmin = localStorage.getItem("esAdmin") === "true";
-            if (esAdmin) {
-                window.location.href = URL_DASHBOARD;
-            } else {
-                abrirModalLogin();
-            }
-        }
 
         function cambiarTipoPersona() {
             const tipo = document.getElementById("tipoPersona").value;
-            
-            // Ocultar todas las secciones condicionales por defecto
-            document.getElementById("seccionTutor").classList.add("oculto");
-            document.getElementById("seccionEspiritual").classList.add("oculto");
-            document.getElementById("seccionMinisterios").classList.add("oculto");
-            document.getElementById("seccionTalentos").classList.add("oculto");
-            document.getElementById("campoEdadNino").classList.add("oculto");
-            
-            // Mostrar campos requeridos generales
-            document.getElementById("campoTelefono").classList.remove("oculto");
-            document.getElementById("campoFechaNacimiento").classList.remove("oculto");
-            document.getElementById("campoCorreo").classList.remove("oculto");
-
-            // Ajustar requeridos según tipo
             const tutorInput = document.getElementById("tutor");
             const telTutorInput = document.getElementById("telefonoTutor");
 
+            // Elementos de la interfaz
+            const seccionTutor = document.getElementById("seccionTutor");
+            const seccionEspiritual = document.getElementById("seccionEspiritual");
+            const seccionMinisterios = document.getElementById("seccionMinisterios");
+            const seccionTalentos = document.getElementById("seccionTalentos");
+            
+            const campoTelefono = document.getElementById("campoTelefono");
+            const campoFechaNac = document.getElementById("campoFechaNacimiento");
+            const campoEdadNino = document.getElementById("campoEdadNino");
+            const campoCorreo = document.getElementById("campoCorreo");
+
+            if (tutorInput) tutorInput.required = false;
+            if (telTutorInput) telTutorInput.required = false;
+
             if (tipo === "Miembro" || tipo === "Lider") {
-                document.getElementById("seccionEspiritual").classList.remove("oculto");
-                document.getElementById("seccionMinisterios").classList.remove("oculto");
-                document.getElementById("seccionTalentos").classList.remove("oculto");
-                if (tutorInput) tutorInput.required = false;
-                if (telTutorInput) telTutorInput.required = false;
+                // MIEMBROS Y LÍDERES: Ver todo
+                campoTelefono.classList.remove("oculto");
+                campoFechaNac.classList.remove("oculto");
+                campoCorreo.classList.remove("oculto");
+                campoEdadNino.classList.add("oculto");
+                seccionTutor.classList.add("oculto");
+                seccionEspiritual.classList.remove("oculto");
+                seccionMinisterios.classList.remove("oculto");
+                seccionTalentos.classList.remove("oculto");
+
+            } else if (tipo === "Amigo") {
+                // AMIGO: Nombre, Teléfono y Lugar de donde vive únicamente
+                campoTelefono.classList.remove("oculto");
+                campoFechaNac.classList.add("oculto");
+                campoCorreo.classList.add("oculto");
+                campoEdadNino.classList.add("oculto");
+                seccionTutor.classList.add("oculto");
+                seccionEspiritual.classList.add("oculto");
+                seccionMinisterios.classList.add("oculto");
+                seccionTalentos.classList.add("oculto");
+
             } else if (tipo === "Nino") {
-                document.getElementById("seccionTutor").classList.remove("oculto");
-                document.getElementById("campoEdadNino").classList.remove("oculto");
-                document.getElementById("campoTelefono").classList.add("oculto");
-                document.getElementById("campoCorreo").classList.add("oculto");
+                // NIÑO: Nombre, Fecha Nacimiento, Edad, Nombre Tutor, Teléfono Tutor y Lugar donde vive
+                campoTelefono.classList.add("oculto");
+                campoCorreo.classList.add("oculto");
+                campoFechaNac.classList.remove("oculto");
+                campoEdadNino.classList.remove("oculto");
+                seccionTutor.classList.remove("oculto");
+                seccionEspiritual.classList.add("oculto");
+                seccionMinisterios.classList.add("oculto");
+                seccionTalentos.classList.add("oculto");
+
                 if (tutorInput) tutorInput.required = true;
                 if (telTutorInput) telTutorInput.required = true;
-            } else { // Amigo / Visitante
-                if (tutorInput) tutorInput.required = false;
-                if (telTutorInput) telTutorInput.required = false;
             }
         }
 
-        function guardarRegistro() {
-            const registros = JSON.parse(localStorage.getItem('registrosIglesia')) || [];
-            
+        async function guardarRegistro() {
+            const btnSubmit = document.getElementById("btnSubmit");
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "⏳ Guardando...";
+
             const ministeriosSeleccionados = Array.from(document.querySelectorAll('input[name="ministerio"]:checked'))
                 .map(cb => cb.value)
                 .join(', ');
 
             const nuevoRegistro = {
-                id: Date.now(),
+                fechaRegistro: new Date().toLocaleString("es-DO"),
                 tipoPersona: document.getElementById('tipoPersona').value,
                 nombre: document.getElementById('nombre').value,
                 telefono: document.getElementById('telefono') ? document.getElementById('telefono').value : '',
-                fechaNacimiento: document.getElementById('fechaNacimiento').value,
+                fechaNacimiento: document.getElementById('fechaNacimiento') ? document.getElementById('fechaNacimiento').value : '',
                 edadNino: document.getElementById('edadNino') ? document.getElementById('edadNino').value : '',
                 correo: document.getElementById('correo') ? document.getElementById('correo').value : '',
                 direccion: document.getElementById('direccion').value,
                 tutor: document.getElementById('tutor') ? document.getElementById('tutor').value : '',
                 telefonoTutor: document.getElementById('telefonoTutor') ? document.getElementById('telefonoTutor').value : '',
-                asisteMinNinos: document.getElementById('asisteMinNinos') ? document.getElementById('asisteMinNinos').value : '',
                 bautizado: document.getElementById('bautizado') ? document.getElementById('bautizado').value : '',
                 clase: document.getElementById('clase') ? document.getElementById('clase').value : '',
                 ministerios: ministeriosSeleccionados,
                 talentos: document.getElementById('gustos') ? document.getElementById('gustos').value : ''
             };
 
-            registros.push(nuevoRegistro);
-            localStorage.setItem('registrosIglesia', JSON.stringify(registros));
-            
-            document.getElementById("pantallaAgradecimiento").style.display = "flex";
+            try {
+                if (window.db && window.collection && window.addDoc) {
+                    await window.addDoc(window.collection(window.db, "miembros"), nuevoRegistro);
+                    document.getElementById("pantallaAgradecimiento").style.display = "flex";
+                } else {
+                    alert("Por favor verifica la configuración de tu Firebase.");
+                }
+            } catch (error) {
+                console.error("Error guardando registro: ", error);
+                alert("Error al guardar: " + error.message);
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "💾 Guardar Ficha";
+            }
         }
 
         function reiniciarFormulario() {
@@ -445,9 +471,13 @@
             document.getElementById("pantallaAgradecimiento").style.display = "none";
         }
 
-        function salirOInicio() {
-            reiniciarFormulario();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        function irAreaAdministrativa() {
+            const esAdmin = localStorage.getItem("esAdmin") === "true";
+            if (esAdmin) {
+                window.location.href = URL_DASHBOARD;
+            } else {
+                abrirModalLogin();
+            }
         }
 
         function abrirModalLogin() {
