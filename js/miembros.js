@@ -1,53 +1,80 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Miembros - Casa de Liberación</title>
-    <link rel="stylesheet" href="css/estilos.css">
-    <style>
-        @media print {
-            .no-imprimir { display: none !important; }
-            .contenedor { box-shadow: none !important; border: none !important; width: 100% !important; max-width: 100% !important; padding: 0 !important; }
-            body { background: white !important; }
-        }
-    </style>
-</head>
-<body>
-    <div class="contenedor" style="width: 98%; max-width: 1100px; margin: 20px auto;">
-        <h1>Lista de Fichas de Miembros</h1>
-        <h2>Casa de Liberación y Restauración</h2>
+// Importar la configuración y funciones de Firebase
+import { db } from "./firebase-config.js"; 
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        <div class="no-imprimir" style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
-            <input type="text" id="buscador" placeholder="🔎 Buscar por nombre, rol, teléfono o ministerio..." style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-            <button type="button" onclick="window.print()" style="width: auto; background-color: #6c757d; padding: 10px 20px; color: white; border: none; border-radius: 5px; cursor: pointer;">🖨️ Imprimir / PDF</button>
-        </div>
+let todosLosMiembros = []; // Guardará una copia local para la búsqueda rápida
 
-        <div style="overflow-x: auto; margin-top: 15px;">
-            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                <thead>
-                    <tr style="background-color: #0b5ed7; color: white;">
-                        <th style="padding: 8px; border: 1px solid #ddd;">Nombre</th>
-                        <th style="padding: 8px; border: 1px solid #ddd;">Teléfono</th>
-                        <th style="padding: 8px; border: 1px solid #ddd;">Rol</th>
-                        <th style="padding: 8px; border: 1px solid #ddd;">Bautizado</th>
-                        <th style="padding: 8px; border: 1px solid #ddd;">Clase</th>
-                        <th style="padding: 8px; border: 1px solid #ddd;">Ministerio</th>
-                        <th style="padding: 8px; border: 1px solid #ddd;">Tutor / Madre</th>
-                        <th style="padding: 8px; border: 1px solid #ddd;">Gustos / Notas</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaMiembros" style="text-align: center;">
-                </tbody>
-            </table>
-        </div>
+document.addEventListener('DOMContentLoaded', () => {
+    cargarMiembrosFirebase();
 
-        <br>
-        <div class="no-imprimir" style="text-align: center;">
-            <a href="dashboard.html" style="color: #0b5ed7; text-decoration: none; font-weight: bold;">← Volver al Panel</a>
-        </div>
-    </div>
+    // Evento de búsqueda en tiempo real
+    const buscador = document.getElementById('buscador');
+    if (buscador) {
+        buscador.addEventListener('input', filtrarMiembros);
+    }
+});
 
-    <script src="js/miembros.js"></script>
-</body>
-</html>
+// Función para leer los datos desde Firestore
+async function cargarMiembrosFirebase() {
+    const tbody = document.getElementById('tablaMiembros');
+    if (!tbody) return;
+
+    tbody.innerHTML = '<tr><td colspan="8" style="padding: 15px;">⏳ Cargando miembros desde la base de datos...</td></tr>';
+
+    try {
+        const querySnapshot = await getDocs(collection(db, "miembros"));
+        
+        todosLosMiembros = [];
+
+        querySnapshot.forEach((doc) => {
+            todosLosMiembros.push({ id: doc.id, ...doc.data() });
+        });
+
+        renderizarTabla(todosLosMiembros);
+
+    } catch (error) {
+        console.error("Error al cargar los miembros de Firebase:", error);
+        tbody.innerHTML = '<tr><td colspan="8" style="color: red; padding: 15px;">⚠️ Error al cargar los datos. Revisa la consola o los permisos de Firebase.</td></tr>';
+    }
+}
+
+// Función para pintar las filas en la tabla
+function renderizarTabla(lista) {
+    const tbody = document.getElementById('tablaMiembros');
+    tbody.innerHTML = '';
+
+    if (lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="padding: 15px;">No se encontraron registros de miembros.</td></tr>';
+        return;
+    }
+
+    lista.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>${m.nombre || m.nombreCompleto || '-'}</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${m.telefono || m.celular || '-'}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${m.tipoPersona || m.rol || 'Miembro'}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${m.bautizado || 'No'}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${m.clase || '-'}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${m.ministerios || m.ministerio || '-'}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${m.tutor || m.madre || '-'}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${m.talentos || m.gustos || m.notas || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Función del buscador
+function filtrarMiembros(e) {
+    const texto = e.target.value.toLowerCase();
+    const filtrados = todosLosMiembros.filter(m => {
+        const nombre = (m.nombre || m.nombreCompleto || '').toLowerCase();
+        const telefono = (m.telefono || '').toLowerCase();
+        const rol = (m.tipoPersona || m.rol || '').toLowerCase();
+        const ministerio = (m.ministerios || m.ministerio || '').toLowerCase();
+
+        return nombre.includes(texto) || telefono.includes(texto) || rol.includes(texto) || ministerio.includes(texto);
+    });
+
+    renderizarTabla(filtrados);
+}

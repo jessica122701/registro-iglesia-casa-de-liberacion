@@ -1,14 +1,28 @@
-document.getElementById('formLogin').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const usuario = document.getElementById('usuario').value;
-    const clave = document.getElementById('clave').value;
+document.addEventListener("DOMContentLoaded", function () {
+    const formLogin = document.getElementById("formLogin");
+    const mensajeError = document.getElementById("mensajeError");
 
-    // Puedes cambiar aquí tu usuario y clave si lo deseas
-    if (usuario === 'casa de liberacion' && clave === '011517') {
-        sessionStorage.setItem('adminAutenticado', 'true');
-        window.location.href = 'dashboard.html';
-    } else {
-        alert('❌ Usuario o contraseña incorrectos');
+    if (formLogin) {
+        formLogin.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const usuarioInput = document.getElementById("usuario").value.trim();
+            const passwordInput = document.getElementById("password").value.trim();
+
+            if (usuarioInput === "admin" && passwordInput === "011517") {
+                // Sincronizamos todas las banderas de sesión
+                localStorage.setItem("esAdmin", "true");
+                localStorage.setItem("adminSesion", "activa");
+                localStorage.setItem("adminAutenticado", "true");
+                localStorage.setItem("usuarioLogueado", "admin");
+
+                // Redirigir al Dashboard
+                window.location.href = "dashboard.html";
+            } else {
+                if (mensajeError) {
+                    mensajeError.style.display = "block";
+                }
+            }
+        });
     }
 });

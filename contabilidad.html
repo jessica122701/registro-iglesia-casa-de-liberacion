@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contabilidad - Casa de Liberación y Restauración</title>
+    
+    <!-- Fuentes Elegantes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Segoe+UI:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Configuración PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+
+    <!-- Script de Autenticación (Debe ir primero) -->
+    <script src="js/auth.js"></script>
+    
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #0d1117; color: #333; padding-bottom: 30px; min-height: 100vh; }
+
+        /* ==========================================
+           NAV SUPERIOR
+           ========================================== */
+        .navbar {
+            background: linear-gradient(180deg, #0b1120 0%, #0f172a 100%);
+            border-bottom: 2px solid #d4af37;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .brand-emblem-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-waves { width: 40px; height: 40px; flex-shrink: 0; }
+
+        .brand-text-box { display: flex; flex-direction: column; justify-content: center; }
+
+        .brand-first-line {
+            font-family: 'Cinzel', serif; color: #f1f5f9; font-weight: 700;
+            font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; line-height: 1.1;
+        }
+
+        .brand-second-line {
+            font-family: 'Cinzel', serif; color: #d4af37; font-weight: 600;
+            font-size: 12px; letter-spacing: 2px; text-transform: uppercase; line-height: 1.1; margin-top: 2px;
+        }
+
+        .brand-divider {
+            height: 1px; background: linear-gradient(90deg, #d4af37 0%, rgba(212, 175, 55, 0.2) 100%);
+            margin: 3px 0; border: none;
+        }
+
+        .brand-badge { font-size: 10px; color: #94a3b8; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+        .nav-links { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .nav-btn {
+            background: rgba(255,255,255,0.05); color: #fff; text-decoration: none; padding: 8px 16px;
+            border-radius: 6px; font-size: 13px; font-weight: 600; transition: all 0.2s; 
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .nav-btn:hover, .nav-btn.activo { 
+            background: #d4af37; color: #0f172a; font-weight: 700; 
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); 
+        }
+        .nav-btn.logout { background: #dc2626; border: none; cursor: pointer; }
+        .nav-btn.logout:hover { background: #b91c1c; color: #fff; }
+
+        /* ==========================================
+           CONTENEDOR PRINCIPAL Y TARJETAS
+           ========================================== */
+        .contenedor-admin {
+            width: 95%; max-width: 1000px; margin: 0 auto; background: #ffffff;
+            padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+
+        .grid-resumen { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .card-stat { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 15px; text-align: center; }
+        .card-stat.destacada { border-color: #d4af37; background: #fffdf5; }
+        .card-stat span { display: block; font-size: 13px; color: #64748b; font-weight: 600; }
+        .card-stat strong { display: block; font-size: 22px; color: #0f172a; margin-top: 5px; }
+
+        .form-movimiento {
+            background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #d4af37;
+            border-radius: 8px; padding: 20px; margin-bottom: 25px;
+        }
+        .form-movimiento h3 { font-size: 16px; color: #0f172a; margin-bottom: 15px; }
+
+        .grid-campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+        .campo-grupo { display: flex; flex-direction: column; gap: 5px; }
+        .campo-grupo label { font-size: 13px; font-weight: 600; color: #475569; }
+        .campo-grupo input, .campo-grupo select {
+            padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; background: #fff;
+        }
+
+        .btn-registrar {
+            background: #0f172a; color: #d4af37; border: none; padding: 12px 18px; border-radius: 6px;
+            font-weight: bold; cursor: pointer; margin-top: 15px; width: 100%; transition: background 0.2s; font-size: 15px;
+        }
+        .btn-registrar:hover { background: #1e293b; }
+
+        .acciones-tabla { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
+        .grupo-botones-acciones { display: flex; gap: 8px; }
+        
+        .btn-excel {
+            background: #16a34a; color: #fff; border: none; padding: 8px 14px; border-radius: 6px;
+            font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.2s;
+        }
+        .btn-excel:hover { background: #15803d; }
+
+        .btn-imprimir {
+            background: #0284c7; color: #fff; border: none; padding: 8px 14px; border-radius: 6px;
+            font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.2s;
+        }
+        .btn-imprimir:hover { background: #0369a1; }
+
+        .tabla-contenedor { overflow-x: auto; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th { background: #0f172a; color: #fff; padding: 12px; font-weight: 600; }
+        td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+        tr:hover { background: #f8fafc; }
+
+        .ingreso { color: #16a34a; font-weight: bold; }
+        .egreso { color: #dc2626; font-weight: bold; }
+
+        .btn-eliminar {
+            background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5;
+            padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;
+        }
+        .btn-eliminar:hover { background: #dc2626; color: #fff; }
+
+        /* IMPRESIÓN OFICIAL */
+        @media print {
+            body { background: #fff; padding: 0; }
+            .navbar, .form-movimiento, .acciones-tabla button, td:last-child, th:last-child { display: none !important; }
+            .contenedor-admin { width: 100%; max-width: 100%; border: none; box-shadow: none; padding: 0; }
+            table { font-size: 12px; }
+            th { background: #333 !important; color: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVEGACIÓN PRINCIPAL -->
+    <nav class="navbar">
+        <div class="brand-emblem-container">
+            <svg class="brand-waves" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 10 20 Q 50 5 90 20 Q 50 12 10 20 Z" fill="#D4AF37"/>
+                <path d="M 20 35 Q 50 20 80 35 Q 50 27 20 35 Z" fill="#D4AF37"/>
+            </svg>
+            
+            <div class="brand-text-box">
+                <div class="brand-first-line">Casa de Liberación</div>
+                <div class="brand-divider"></div>
+                <div class="brand-second-line">y Restauración</div>
+                <div class="brand-badge">Modulo de Contabilidad</div>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="index.html" class="nav-btn">🏠 Inicio</a>
+            <a href="miembros.html" class="nav-btn">👥 Miembros</a>
+            <a href="contabilidad.html" class="nav-btn activo">💰 Contabilidad</a>
+            <button onclick="cerrarSesion()" class="nav-btn logout">🔒 Cerrar Sesión</button>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO CONTABLE -->
+    <div class="contenedor-admin">
+
+        <!-- RESUMEN FINANCIERO DINÁMICO -->
+        <div class="grid-resumen">
+            <div class="card-stat">
+                <span>Total Entradas (Ingresos)</span>
+                <strong id="totalIngresos" class="ingreso">RD$ 0.00</strong>
+            </div>
+            <div class="card-stat">
+                <span>Total Salidas (Gastos)</span>
+                <strong id="totalEgresos" class="egreso">RD$ 0.00</strong>
+            </div>
+            <div class="card-stat destacada">
+                <span>Balance en Caja</span>
+                <strong id="balanceCaja">RD$ 0.00</strong>
+            </div>
+        </div>
+
+        <!-- FORMULARIO UNIFICADO DE REGISTRO -->
+        <div class="form-movimiento">
+            <h3>📝 Registrar Transacción</h3>
+            <form id="formContabilidad" onsubmit="guardarMovimiento(event)">
+                <div class="grid-campos">
+                    <div class="campo-grupo">
+                        <label for="fechaRegistro">📅 Fecha</label>
+                        <input type="date" id="fechaRegistro" required>
+                    </div>
+
+                    <div class="campo-grupo">
+                        <label for="tipoMovimiento">Tipo de Transacción</label>
+                        <select id="tipoMovimiento" required>
+                            <option value="Diezmo">Diezmo (+)</option>
+                            <option value="Ofrenda">Ofrenda (+)</option>
+                            <option value="Donación">Donación (+)</option>
+                            <option value="Gasto">Gasto / Egreso (-)</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-grupo">
+                        <label for="selectMiembro">Miembro / Persona (Opcional)</label>
+                        <select id="selectMiembro">
+                            <option value="Anónimo / General">-- Anónimo / General --</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-grupo">
+                        <label for="monto">Monto (RD$)</label>
+                        <input type="number" id="monto" step="0.01" min="0.01" placeholder="0.00" required>
+                    </div>
+                </div>
+
+                <div class="grid-campos" style="margin-top: 12px;">
+                    <div class="campo-grupo" style="grid-column: span 2;">
+                        <label for="detalle">Concepto / Observación</label>
+                        <input type="text" id="detalle" placeholder="Ej: Diezmo de servicio dominical, Pago de energía eléctrica..." required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-registrar">💾 Guardar Registro</button>
+            </form>
+        </div>
+
+        <!-- ACCIONES Y TABLA DE HISTORIAL -->
+        <div class="acciones-tabla">
+            <h3>📋 Historial de Movimientos</h3>
+            <div class="grupo-botones-acciones">
+                <button onclick="window.print()" class="btn-imprimir">🖨️ Imprimir</button>
+                <button onclick="exportarExcel()" class="btn-excel">📊 Descargar Excel</button>
+            </div>
+        </div>
+
+        <div class="tabla-contenedor">
+            <table id="tablaReporte">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Persona / Entidad</th>
+                        <th>Tipo</th>
+                        <th>Concepto / Detalle</th>
+                        <th>Monto</th>
+                        <th style="width: 50px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaContabilidad">
+                    <!-- Se genera automáticamente dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- LÓGICA DE JAVASCRIPT COMPLETA Y SIN CONFLICTOS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Asignar fecha actual por defecto
+            const inputFecha = document.getElementById('fechaRegistro');
+            if (inputFecha) {
+                inputFecha.value = new Date().toISOString().slice(0, 10);
+            }
+
+            cargarListaMiembros();
+            cargarTablaMovimientos();
+        });
+
+        // 1. Cargar miembros guardados previamente desde cualquier clave común en localStorage
+        function cargarListaMiembros() {
+            const select = document.getElementById('selectMiembro');
+            if (!select) return;
+
+            // Busca en todas las claves posibles donde se suelen guardar los miembros
+            const registros = JSON.parse(localStorage.getItem('miembros')) || 
+                              JSON.parse(localStorage.getItem('registrosIglesia')) || 
+                              JSON.parse(localStorage.getItem('misRegistros')) || 
+                              JSON.parse(localStorage.getItem('registros')) || [];
+
+            select.innerHTML = '<option value="Anónimo / General">-- Anónimo / General --</option>';
+
+            registros.forEach(persona => {
+                // Soporta diferentes estructuras de nombres (nombreCompleto, nombre + apellido, o nombres + apellidos)
+                let nombreCompleto = persona.nombreCompleto || persona.nombre;
+                
+                if (!nombreCompleto) {
+                    const nombres = persona.nombres || persona.primerNombre || '';
+                    const apellidos = persona.apellidos || persona.primerApellido || '';
+                    nombreCompleto = `${nombres} ${apellidos}`.trim();
+                }
+
+                if (nombreCompleto) {
+                    const tipo = persona.tipoPersona || persona.rol || persona.categoria || 'Miembro';
+                    const option = document.createElement('option');
+                    option.value = nombreCompleto;
+                    option.textContent = `${nombreCompleto} (${tipo})`;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        // 2. Guardar movimiento contable
+        function guardarMovimiento(e) {
+            e.preventDefault();
+
+            const fecha = document.getElementById('fechaRegistro').value;
+            const tipo = document.getElementById('tipoMovimiento').value;
+            const persona = document.getElementById('selectMiembro').value || 'Anónimo / General';
+            const monto = parseFloat(document.getElementById('monto').value) || 0;
+            const detalle = document.getElementById('detalle').value;
+
+            const nuevoMovimiento = { id: Date.now(), fecha, tipo, persona, monto, detalle };
+
+            const movimientos = JSON.parse(localStorage.getItem('movimientosContabilidad')) || [];
+            movimientos.push(nuevoMovimiento);
+            localStorage.setItem('movimientosContabilidad', JSON.stringify(movimientos));
+
+            // Resetear inputs del formulario
+            document.getElementById('formContabilidad').reset();
+            document.getElementById('fechaRegistro').value = new Date().toISOString().slice(0, 10);
+
+            // Refrescar vista
+            cargarTablaMovimientos();
+        }
+
+        // 3. Renderizar tabla y actualizar las tarjetas de cálculo
+        function cargarTablaMovimientos() {
+            const tbody = document.getElementById('tablaContabilidad');
+            if (!tbody) return;
+
+            const movimientos = JSON.parse(localStorage.getItem('movimientosContabilidad')) || [];
+            tbody.innerHTML = '';
+
+            let ingresosTotales = 0;
+            let egresosTotales = 0;
+
+            // Renderizar ordenando los más recientes arriba
+            [...movimientos].reverse().forEach(m => {
+                const esGasto = m.tipo === 'Gasto';
+                
+                if (esGasto) {
+                    egresosTotales += m.monto;
+                } else {
+                    ingresosTotales += m.monto;
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${m.fecha || 'N/A'}</td>
+                    <td>${m.persona}</td>
+                    <td><strong>${m.tipo}</strong></td>
+                    <td>${m.detalle || '-'}</td>
+                    <td class="${esGasto ? 'egreso' : 'ingreso'}">
+                        ${esGasto ? '-' : '+'} RD$ ${m.monto.toLocaleString('es-DO', { minimumFractionDigits: 2 })}
+                    </td>
+                    <td>
+                        <button class="btn-eliminar" onclick="eliminarMovimiento(${m.id})">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Actualizar tarjetas dinámicas
+            document.getElementById('totalIngresos').innerText = `RD$ ${ingresosTotales.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+            document.getElementById('totalEgresos').innerText = `RD$ ${egresosTotales.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+            
+            const balance = ingresosTotales - egresosTotales;
+            const elemBalance = document.getElementById('balanceCaja');
+            elemBalance.innerText = `RD$ ${balance.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+            elemBalance.style.color = balance < 0 ? '#dc2626' : '#16a34a';
+        }
+
+        // 4. Eliminar movimiento
+        function eliminarMovimiento(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este registro contable?')) {
+                let movimientos = JSON.parse(localStorage.getItem('movimientosContabilidad')) || [];
+                movimientos = movimientos.filter(m => m.id !== id);
+                localStorage.setItem('movimientosContabilidad', JSON.stringify(movimientos));
+                cargarTablaMovimientos();
+            }
+        }
+
+        // 5. Descargar reporte CSV / Excel
+        function exportarExcel() {
+            const tabla = document.getElementById('tablaReporte');
+            let csv = [];
+            
+            for (let i = 0; i < tabla.rows.length; i++) {
+                let fila = [];
+                for (let j = 0; j < tabla.rows[i].cells.length - 1; j++) {
+                    fila.push('"' + tabla.rows[i].cells[j].innerText.replace(/"/g, '""') + '"');
+                }
+                csv.push(fila.join(','));
+            }
+
+            const blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            const enlace = document.createElement('a');
+            enlace.href = URL.createObjectURL(blob);
+            enlace.download = `Reporte_Contabilidad_${new Date().toISOString().slice(0,10)}.csv`;
+            enlace.click();
+        }
+
+        // 6. Cierre de sesión de respaldo
+        function cerrarSesion() {
+            localStorage.removeItem('sesionActiva');
+            localStorage.removeItem('esAdmin');
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <!-- Script para integración adicional (si aplica en el servidor) -->
+    <script type="module" src="js/contabilidad.js"></script>
+</body>
+</html>

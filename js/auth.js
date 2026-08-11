@@ -1,11 +1,23 @@
-// Verificar si el usuario ha iniciado sesión
-if (sessionStorage.getItem('adminAutenticado') !== 'true') {
-    alert('⚠️ Acceso protegido. Por favor inicia sesión primero.');
-    window.location.href = 'index.html';
+// Verificar si hay alguna sesión activa
+function verificarSesion() {
+    const esAdmin = localStorage.getItem("esAdmin");
+    const sesion1 = localStorage.getItem("adminSesion");
+
+    // Si no es admin, redirige al index.html
+    if (esAdmin !== "true" && sesion1 !== "activa") {
+        alert("Acceso denegado. Por favor inicia sesión.");
+        window.location.href = "index.html";
+    }
 }
 
-// Función para cerrar la sesión de administrador
-function cerrarSesion() {
-    sessionStorage.removeItem('adminAutenticado');
-    window.location.href = 'index.html';
-}
+// Ejecutar verificación inmediatamente
+verificarSesion();
+
+// Función global para cerrar sesión en todo el sistema
+window.cerrarSesion = function() {
+    localStorage.removeItem("esAdmin");
+    localStorage.removeItem("adminSesion");
+    localStorage.removeItem("adminAutenticado");
+    localStorage.removeItem("usuarioLogueado");
+    window.location.href = "index.html";
+};

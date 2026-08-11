@@ -1,258 +1,120 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso - Casa de Liberación y Restauración</title>
-    
-    <!-- Tipografía impactante de Google Fonts -->
+    <title>Casa de Liberación y Restauración</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Segoe+UI:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
 
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            background: radial-gradient(circle at center, #1a2332 0%, #0d1117 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { background-color: #0d1117; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
 
+        .header-main { text-align: center; margin-bottom: 30px; }
+        .brand-title { font-family: 'Cinzel', serif; color: #f1f5f9; font-size: 18px; letter-spacing: 2px; text-transform: uppercase; }
+        .brand-subtitle { font-family: 'Cinzel', serif; color: #d4af37; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; }
+        .brand-divider { width: 80px; height: 1px; background: linear-gradient(90deg, transparent, #d4af37, transparent); margin: 10px auto; border: none; }
+
+        .container { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 20px; }
+
+        /* SECCIÓN PÚBLICA (Formulario) */
+        .card-publica {
+            background-color: #161b22; border: 2px solid #d4af37; border-radius: 16px;
+            padding: 25px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .card-publica h2 { font-family: 'Cinzel', serif; color: #d4af37; font-size: 16px; margin-bottom: 10px; }
+        .card-publica p { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+        .btn-formulario {
+            display: block; width: 100%; background: #d4af37; color: #0d1117;
+            text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 700;
+            font-size: 13px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;
+        }
+        .btn-formulario:hover { background: #f3cf65; }
+
+        /* SECCIÓN LOGIN ADMIN */
         .card-login {
-            background: #ffffff;
-            padding: 40px 28px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 15px rgba(212, 175, 55, 0.15);
-            width: 100%;
-            max-width: 420px;
-            text-align: center;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            background-color: #161b22; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; padding: 25px; text-align: center;
         }
+        .titulo-login { font-family: 'Cinzel', serif; color: #8b949e; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; }
+        .input-login { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(212,175,55,0.2); color: #fff; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 10px; }
+        .btn-login { background: transparent; color: #d4af37; border: 1px solid #d4af37; width: 100%; padding: 10px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; text-transform: uppercase; }
+        .btn-login:hover { background: #d4af37; color: #0d1117; }
+        #mensajeError { font-size: 12px; margin-top: 10px; font-weight: bold; }
 
-        /* --- LOGO DESTACADO CON COLORES Y BRILLO --- */
-        .logo-contenedor {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 25px;
-            background: #0d1117; /* Fondo oscuro interno para resaltar el oro */
-            padding: 22px 15px;
-            border-radius: 14px;
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.15);
-            border: 1px solid #d4af37;
+        /* PANEL PRIVADO ADMINISTRATIVO (BLOQUEADO POR DEFECTO) */
+        #panelAdminPrivado {
+            display: none; /* <--- No visible para usuarios comunes */
+            width: 100%; max-width: 800px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;
         }
-
-        /* ONDAS EN SVG CON GLOW DORADO */
-        .logo-ondas {
-            width: 120px;
-            height: 38px;
-            margin-bottom: 6px;
-            filter: drop-shadow(0px 2px 6px rgba(255, 215, 0, 0.6));
-        }
-
-        /* LÍNEAS DORADAS DE SEPARACIÓN */
-        .linea-logo {
-            width: 90%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #ffe57f, #d4af37, #ffe57f, transparent);
-            border-radius: 2px;
-            margin: 6px 0;
-            box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-        }
-
-        /* TEXTO DEL NOMBRE EN ORO METÁLICO Y BRILLANTE */
-        .logo-texto {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 21px;
-            letter-spacing: 1.8px;
-            text-transform: uppercase;
-            line-height: 1.3;
-            padding: 4px 0;
-            
-            /* Gradiente Oro Real con Brillo Central */
-            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            
-            /* Sombra de texto radiante */
-            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.9));
-        }
-
-        .subtitulo-logo {
-            color: #cbd5e1;
-            font-size: 13px;
-            margin-top: 8px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        /* BANNER PÚBLICO DESTACADO EN VERDE ESMERALDA */
-        .bloque-publico {
-            background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
-            border: 2px solid #16a34a;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 22px;
-            box-shadow: 0 4px 10px rgba(22, 163, 74, 0.1);
-        }
-
-        .bloque-publico p {
-            margin: 0 0 10px 0;
-            font-size: 14px;
-            font-weight: 700;
-            color: #14532d;
-        }
-
-        .btn-publico {
-            display: block;
-            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-            color: white;
-            padding: 13px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 800;
-            text-decoration: none;
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-publico:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(22, 163, 74, 0.45);
-        }
-
-        .separador {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            color: #64748b;
-            font-size: 11px;
-            font-weight: 700;
-            margin: 22px 0;
-            letter-spacing: 0.5px;
-        }
-
-        .separador::before, .separador::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .separador span {
-            padding: 0 10px;
-        }
-
-        /* Formulario de Login Admin */
-        .campo {
-            text-align: left;
-            margin-bottom: 15px;
-        }
-        .campo label {
-            display: block;
-            font-size: 13px;
-            font-weight: 700;
-            color: #475569;
-            margin-bottom: 5px;
-        }
-        .campo input {
-            width: 100%;
-            padding: 11px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .campo input:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
-        }
-        .btn-entrar {
-            width: 100%;
-            background: #0f172a;
-            color: #f8fafc;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 5px;
-            transition: background 0.2s;
-        }
-        .btn-entrar:hover {
-            background: #1e293b;
-        }
+        .card-admin { background: #161b22; border: 1px solid rgba(212,175,55,0.3); border-radius: 16px; padding: 25px; text-align: center; }
+        .card-admin h3 { font-family: 'Cinzel', serif; color: #fff; font-size: 15px; margin-bottom: 10px; }
+        .card-admin p { font-size: 12px; color: #94a3b8; margin-bottom: 15px; }
+        .btn-admin { display: inline-block; width: 100%; border: 1px solid #d4af37; color: #d4af37; text-decoration: none; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+        .btn-admin:hover { background: #d4af37; color: #0d1117; }
+        .btn-logout { grid-column: 1 / -1; background: none; border: none; color: #ef4444; cursor: pointer; font-size: 13px; margin-top: 20px; text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <div class="card-login">
+    <header class="header-main">
+        <div class="brand-title">Casa de Liberación</div>
+        <div class="brand-divider"></div>
+        <div class="brand-subtitle">y Restauración</div>
+    </header>
+
+    <!-- VISTA INICIAL PÚBLICA -->
+    <div id="vistaPublica" class="container">
         
-        <!-- ENCABEZADO CON LOGO RESALTADO Y BRILLANTE -->
-        <div class="logo-contenedor">
-            <!-- Ondas Doradas Radiantes -->
-            <svg class="logo-ondas" viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 5 22 C 30 8, 45 28, 70 14 C 80 8, 90 12, 95 14 C 80 4, 60 18, 40 8 C 25 2, 12 14, 5 22 Z" fill="url(#oroGrad1)"/>
-                <path d="M 15 26 C 35 14, 50 30, 75 18 C 85 14, 92 16, 95 18 C 82 8, 65 22, 45 12 C 30 6, 20 18, 15 26 Z" fill="url(#oroGrad2)"/>
-                <defs>
-                    <linearGradient id="oroGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#ffe57f" />
-                        <stop offset="50%" stop-color="#d4af37" />
-                        <stop offset="100%" stop-color="#aa771c" />
-                    </linearGradient>
-                    <linearGradient id="oroGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#fff176" />
-                        <stop offset="50%" stop-color="#ffb300" />
-                        <stop offset="100%" stop-color="#ff6f00" />
-                    </linearGradient>
-                </defs>
-            </svg>
-            
-            <div class="linea-logo"></div>
-            <div class="logo-texto">
-                CASA DE LIBERACION<br>Y RESTAURACION
-            </div>
-            <div class="linea-logo"></div>
+        <!-- ÚNICO ACCESO PÚBLICO LIBRE -->
+        <section class="card-publica">
+            <h2>📝 Registro de Miembros</h2>
+            <p>Completa el formulario de ingreso o actualización de datos.</p>
+            <a href="registro.html" class="btn-formulario">Llenar Formulario ✍️</a>
+        </section>
 
-            <div class="subtitulo-logo">Sistema de Registro y Membresía</div>
-        </div>
-
-        <!-- BOTÓN PÚBLICO DESTACADO -->
-        <div class="bloque-publico">
-            <p>¿Vas a llenar tu ficha de registro?</p>
-            <a href="registro.html" class="btn-publico">📝 Llenar Ficha Aquí</a>
-        </div>
-
-        <div class="separador"><span>O INICIA SESIÓN SI ERES ADMIN</span></div>
-
-        <!-- FORMULARIO DE ACCESO ADMIN -->
-        <form id="formLogin">
-            <div class="campo">
-                <label for="usuario">Usuario Administrador</label>
-                <input type="text" id="usuario" placeholder="Ej. admin" required>
-            </div>
-            <div class="campo">
-                <label for="clave">Contraseña</label>
-                <input type="password" id="clave" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn-entrar">🔐 Acceso Privado</button>
-        </form>
+        <!-- ACCESO RESTRINGIDO PARA ADMINISTRADORES -->
+        <section class="card-login">
+            <h3 class="titulo-login">🔒 Acceso Privado (Administración)</h3>
+            <form id="formLogin" onsubmit="return false;">
+                <input type="email" id="usuario" class="input-login" placeholder="Correo electrónico" required autocomplete="username">
+                <input type="password" id="password" class="input-login" placeholder="Contraseña" required autocomplete="current-password">
+                <button type="button" id="btnSubmitAdmin" class="btn-login">Ingresar como Admin</button>
+                <div id="mensajeError"></div>
+            </form>
+        </section>
 
     </div>
 
-    <script src="js/login.js"></script>
+    <!-- VISTA PRIVADA (SOLO ADMINISTRADORES TRAS INICIAR SESIÓN) -->
+    <main id="panelAdminPrivado">
+        <section class="card-admin">
+            <h3>📊 Dashboard</h3>
+            <p>Estadísticas y reportes de la iglesia.</p>
+            <a href="dashboard.html" class="btn-admin">Acceder a Estadísticas ➔</a>
+        </section>
+
+        <section class="card-admin">
+            <h3>👥 Directorio</h3>
+            <p>Consulta la lista privada de miembros.</p>
+            <a href="miembros.html" class="btn-admin">Acceder al Directorio ➔</a>
+        </section>
+
+    
+        <section class="card-admin">
+            <h3>🏛️ Administrativo</h3>
+            <p>Gestión privada y control administrativo.</p>
+            <a href="contabilidad.html" class="btn-admin">Acceder a Administrativo ➔</a>
+        </section>
+
+        <button class="btn-logout" id="btnLogout">🔒 Cerrar Sesión Privada</button>
+    </main>
+
+    <!-- Agregamos ?v=2 para forzar a Chrome a leer el archivo nuevo -->
+    <script type="module" src="js/index.js?v=3"></script>
 </body>
-</html>
+</html

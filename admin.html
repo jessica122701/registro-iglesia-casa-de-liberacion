@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrador - Casa de Liberación y Restauración</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #0d1117; color: #333; padding-bottom: 30px; min-height: 100vh; }
+
+        .navbar {
+            background: #0f172a; border-bottom: 2px solid #d4af37; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+            margin-bottom: 25px;
+        }
+        .navbar-brand { color: #fff; font-weight: 800; font-size: 16px; text-transform: uppercase; }
+        .navbar-brand span { color: #d4af37; }
+        .nav-links { display: flex; gap: 10px; align-items: center; }
+        .nav-btn {
+            background: rgba(255,255,255,0.1); color: #fff; text-decoration: none; padding: 8px 14px;
+            border-radius: 6px; font-size: 13px; font-weight: 600; border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .contenedor {
+            width: 95%; max-width: 1000px; margin: 0 auto; background: #ffffff;
+            padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .tabla-contenedor { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th { background: #0f172a; color: #fff; padding: 12px; font-weight: 600; }
+        td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+        tr:hover { background: #f8fafc; }
+
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .badge-nino { background: #dbeafe; color: #1e40af; }
+        .badge-visita { background: #fef3c7; color: #92400e; }
+        .badge-miembro { background: #dcfce7; color: #166534; }
+        .badge-lider { background: #f3e8ff; color: #6b21a8; }
+
+        /* MODAL LOGIN */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-contenido {
+            background: #fff; padding: 25px; border-radius: 12px; width: 90%; max-width: 380px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3); border: 2px solid #d4af37; text-align: center;
+        }
+        .modal-contenido h3 { color: #0f172a; margin-bottom: 15px; }
+        .modal-contenido input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; }
+        .btn-login { background: #0f172a; color: #fff; width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-brand">CASA DE LIBERACIÓN Y RESTAURACIÓN <span>| ADMIN</span></div>
+        <div class="nav-links">
+            <a href="registro.html" class="nav-btn">👥 Volver a Registro</a>
+        </div>
+    </nav>
+
+    <div class="contenedor">
+        <h2>🔒 Fichas Registradas</h2>
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre Completo</th>
+                        <th>Tipo</th>
+                        <th>Teléfono</th>
+                        <th>Detalles Claves</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaMiembros"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL BLOQUEANTE DE CLAVE -->
+    <div id="modalLogin" class="modal-overlay">
+        <div class="modal-contenido">
+            <h3>🔐 Acceso Restringido</h3>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Ingresa la contraseña para ver los registros:</p>
+            <input type="password" id="inputClaveAdmin" placeholder="Contraseña Admin (1234)">
+            <button type="button" class="btn-login" onclick="procesarLogin()">Ingresar</button>
+        </div>
+    </div>
+
+    <script>
+        function procesarLogin() {
+            const clave = document.getElementById("inputClaveAdmin").value;
+            if (clave === "011517") {
+                document.getElementById("modalLogin").style.display = "none";
+                renderizarTablaMiembros();
+            } else {
+                alert("Contraseña incorrecta.");
+            }
+        }
+
+        function renderizarTablaMiembros() {
+            const registros = JSON.parse(localStorage.getItem('registrosIglesia')) || [];
+            const tabla = document.getElementById("tablaMiembros");
+            if (!tabla) return;
+
+            tabla.innerHTML = "";
+
+            if (registros.length === 0) {
+                tabla.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b; padding:20px;">No hay fichas registradas aún.</td></tr>`;
+                return;
+            }
+
+            registros.forEach((r) => {
+                let badgeClass = "badge-miembro";
+                if (r.tipoPersona === "Nino") badgeClass = "badge-nino";
+                else if (r.tipoPersona === "Amigo") badgeClass = "badge-visita";
+                else if (r.tipoPersona === "Lider") badgeClass = "badge-lider";
+
+                let detalles = "";
+                if (r.tipoPersona === "Nino") {
+                    detalles = `Edad: ${r.edadNino || '-'} años | Tutor/Madre: ${r.tutor || '-'} | Min. Niños: ${r.asisteMinNinos}`;
+                } else if (r.tipoPersona === "Amigo") {
+                    let clasif = "No especificada";
+                    if (r.fechaNacimiento) {
+                        const hoy = new Date();
+                        const nac = new Date(r.fechaNacimiento);
+                        let edad = hoy.getFullYear() - nac.getFullYear();
+                        clasif = edad >= 18 ? "Adulto" : "Joven";
+                    }
+                    detalles = `Clasificación: ${clasif} | Vive en: ${r.direccion || '-'}`;
+                } else {
+                    detalles = `Clase: ${r.clase} | Bautizado: ${r.bautizado} | Min: ${r.ministerios || 'Ninguno'}`;
+                }
+
+                const fila = document.createElement("tr");
+                fila.innerHTML = `
+                    <td><strong>${r.nombre}</strong></td>
+                    <td><span class="badge ${badgeClass}">${r.tipoPersona}</span></td>
+                    <td>${r.telefono || r.telefonoTutor || '-'}</td>
+                    <td style="font-size:12px; color:#475569;">${detalles}</td>
+                    <td>
+                        <button onclick="eliminarRegistro('${r.id}')" style="background:#dc2626; color:#fff; border:none; padding:5px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">Eliminar</button>
+                    </td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        function eliminarRegistro(id) {
+            if (confirm("¿Estás seguro de eliminar esta ficha?")) {
+                let registros = JSON.parse(localStorage.getItem('registrosIglesia')) || [];
+                registros = registros.filter(r => r.id != id);
+                localStorage.setItem('registrosIglesia', JSON.stringify(registros));
+                renderizarTablaMiembros();
+            }
+        }
+    </script>
+</body>
+</html>
