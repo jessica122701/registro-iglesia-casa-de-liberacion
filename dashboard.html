@@ -197,6 +197,7 @@
 
                 if (querySnapshot.empty) {
                     tablaCuerpo.innerHTML = `<tr><td colspan="6" style="text-align: center;">No hay registros guardados en Firebase aún.</td></tr>`;
+                    return;
                 }
 
                 querySnapshot.forEach((doc) => {
@@ -206,9 +207,13 @@
                     const tipo = (data.tipoPersona || '').toLowerCase();
 
                     // Conteo según categoría
-                    if (tipo.includes('lider') || tipo.includes 'líder') lideres++;
-                    else if (tipo.includes('nino') || tipo.includes('niño') || tipo.includes('niña')) ninos++;
-                    else if (tipo.includes('amigo') || tipo.includes('visitante')) amigos++;
+                    if (tipo.includes('lider') || tipo.includes('líder')) {
+                        lideres++;
+                    } else if (tipo.includes('nino') || tipo.includes('niño') || tipo.includes('niña')) {
+                        ninos++;
+                    } else if (tipo.includes('amigo') || tipo.includes('visitante')) {
+                        amigos++;
+                    }
 
                     // Badge de color según el tipo
                     let badgeClass = "badge-miembro";
