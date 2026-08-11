@@ -122,11 +122,11 @@
             gap: 8px;
         }
 
-        /* CAMPOS ORGANIZADOS EN UNA FILA HORIZONTAL */
+        /* CAMPOS ORGANIZADOS EN UNA FILA HORIZONTAL DE 5 COLUMNAS */
         .form-fila-horizontal {
             display: grid;
-            grid-template-columns: 1.2fr 1.5fr 1.8fr 1fr;
-            gap: 15px;
+            grid-template-columns: 1fr 1.2fr 1.3fr 1.2fr 1fr;
+            gap: 12px;
             margin-bottom: 15px;
         }
 
@@ -157,7 +157,7 @@
         }
 
         .campo-observacion {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .btn-guardar-registro {
@@ -288,13 +288,15 @@
             <h3>📋 Registrar Transacción</h3>
             <form id="formContabilidad">
                 <div class="form-fila-horizontal">
+                    <!-- 1. Fecha -->
                     <div class="campo-grupo">
                         <label>📅 Fecha</label>
                         <input type="date" id="fechaRegistro" required>
                     </div>
 
+                    <!-- 2. Tipo de Transacción -->
                     <div class="campo-grupo">
-                        <label>Tipo de Transacción</label>
+                        <label>⬇️ Tipo Transacción</label>
                         <select id="tipoMovimiento" required>
                             <option value="Diezmo">Diezmo (+)</option>
                             <option value="Ofrenda">Ofrenda (+)</option>
@@ -303,19 +305,34 @@
                         </select>
                     </div>
 
+                    <!-- 3. Tipo de Culto / Reunión -->
                     <div class="campo-grupo">
-                        <label>Miembro / Persona (Opcional)</label>
+                        <label>⛪ Culto / Reunión</label>
+                        <select id="tipoReunion" required>
+                            <option value="" disabled selected>Seleccione...</option>
+                            <option value="Culto de Miércoles">Culto de Miércoles</option>
+                            <option value="Culto de Domingo">Culto de Domingo</option>
+                            <option value="Servicio Diferente">Servicio Diferente</option>
+                            <option value="Reunión de Niños">Reunión de Niños</option>
+                        </select>
+                    </div>
+
+                    <!-- 4. Persona / Entidad -->
+                    <div class="campo-grupo">
+                        <label>👤 Persona / Entidad</label>
                         <select id="selectMiembro">
                             <option value="General / No Aplica">-- Anónimo / General --</option>
                         </select>
                     </div>
 
+                    <!-- 5. Monto -->
                     <div class="campo-grupo">
-                        <label>Monto (RD$)</label>
+                        <label>💰 Monto (RD$)</label>
                         <input type="number" id="monto" placeholder="0.00" step="0.01" required>
                     </div>
                 </div>
 
+                <!-- Concepto / Observación -->
                 <div class="campo-grupo campo-observacion">
                     <label>Concepto / Observación</label>
                     <input type="text" id="observacion" placeholder="Ej: Diezmo de servicio dominical, Pago de energía eléctrica..." required>
@@ -341,6 +358,7 @@
                             <th>Fecha</th>
                             <th>Persona / Entidad</th>
                             <th>Tipo</th>
+                            <th>Culto / Reunión</th>
                             <th>Concepto / Detalle</th>
                             <th>Monto</th>
                             <th>Acciones</th>
@@ -348,7 +366,7 @@
                     </thead>
                     <tbody id="tablaContabilidadCuerpo">
                         <tr>
-                            <td colspan="6" style="text-align: center;">⏳ Cargando registros...</td>
+                            <td colspan="7" style="text-align: center;">⏳ Cargando registros...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -407,7 +425,7 @@
                 let gastos = 0;
 
                 if (querySnapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No hay transacciones registradas.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">No hay transacciones registradas.</td></tr>`;
                 } else {
                     querySnapshot.forEach((docSnapshot) => {
                         const data = docSnapshot.data();
@@ -429,6 +447,7 @@
                                 <td>${data.fecha || '-'}</td>
                                 <td>${data.persona || 'General / No Aplica'}</td>
                                 <td>${data.tipo || '-'}</td>
+                                <td>${data.tipoReunion || '-'}</td>
                                 <td>${data.observacion || '-'}</td>
                                 <td class="${claseMonto}">${signo}RD$ ${monto.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
                                 <td><button class="btn-eliminar" onclick="eliminarRegistro('${id}')">🗑️</button></td>
@@ -447,7 +466,7 @@
 
             } catch (e) {
                 console.error("Error contabilidad:", e);
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Error al cargar datos.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Error al cargar datos.</td></tr>`;
             }
         }
 
@@ -456,13 +475,19 @@
             e.preventDefault();
             const fecha = document.getElementById("fechaRegistro").value;
             const tipo = document.getElementById("tipoMovimiento").value;
+            const tipoReunion = document.getElementById("tipoReunion").value;
             const persona = document.getElementById("selectMiembro").value;
             const monto = parseFloat(document.getElementById("monto").value);
             const observacion = document.getElementById("observacion").value;
 
             try {
                 await addDoc(collection(db, "contabilidad"), {
-                    fecha, tipo, persona, monto, observacion,
+                    fecha, 
+                    tipo, 
+                    tipoReunion, 
+                    persona, 
+                    monto, 
+                    observacion,
                     creado: new Date().toISOString()
                 });
                 alert("¡Transacción registrada con éxito!");
@@ -486,12 +511,11 @@
         window.exportarExcel = function() {
             const tabla = document.getElementById("tablaContabilidad");
             
-            // Crear una copia temporal de la tabla excluyendo la columna de "Acciones"
             const tablaCopia = tabla.cloneNode(true);
             const filas = tablaCopia.rows;
             for (let i = 0; i < filas.length; i++) {
-                if (filas[i].cells.length > 5) {
-                    filas[i].deleteCell(5); // Eliminar la columna de la papelera
+                if (filas[i].cells.length > 6) {
+                    filas[i].deleteCell(6); // Eliminar la columna de la papelera en el Excel
                 }
             }
 

@@ -158,6 +158,11 @@
         .badge-amigo { background-color: #f3e8ff; color: #6b21a8; }
         .badge-nino { background-color: #dcfce7; color: #15803d; }
 
+        .acciones-botones {
+            display: flex;
+            gap: 6px;
+        }
+
         .btn-editar {
             background-color: #f59e0b;
             color: #111;
@@ -167,6 +172,21 @@
             cursor: pointer;
             font-size: 12px;
             font-weight: bold;
+        }
+
+        .btn-eliminar-tabla {
+            background-color: #fee2e2;
+            color: #dc2626;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .btn-eliminar-tabla:hover {
+            background-color: #dc2626;
+            color: white;
         }
 
         /* MODAL / VENTANA FLOTANTE DE EDICIÓN */
@@ -243,7 +263,7 @@
         }
 
         @media print {
-            .header-nav, .acciones-superiores, .btn-editar, .modal-overlay {
+            .header-nav, .acciones-superiores, .acciones-botones, .modal-overlay {
                 display: none !important;
             }
             .contenedor-lista { max-width: 100%; margin: 0; padding: 0; }
@@ -358,10 +378,10 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE FIREBASE, EDICIÓN Y EXPORTAR -->
+    <!-- SCRIPT DE FIREBASE, EDICIÓN, ELIMINACIÓN Y EXPORTAR -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyAUWrwigD3-pekHIkzRjtgdadLDo6zK9rY",
@@ -435,7 +455,10 @@
                     </td>
                     <td>${data.ministerios || data.talentos || 'N/A'}</td>
                     <td>
-                        <button class="btn-editar" onclick="abrirEdicion('${data.id}')">✏️ Editar / Avanzar</button>
+                        <div class="acciones-botones">
+                            <button class="btn-editar" onclick="abrirEdicion('${data.id}')" title="Editar">✏️</button>
+                            <button class="btn-eliminar-tabla" onclick="eliminarMiembro('${data.id}')" title="Eliminar">🗑️</button>
+                        </div>
                     </td>
                 </tr>
             `;
@@ -486,6 +509,22 @@
                 alert("Ocurrió un error al intentar actualizar el registro.");
             }
         });
+
+        // 🔥 FUNCIÓN PARA ELIMINAR MIEMBRO DE FIREBASE
+        window.eliminarMiembro = async function(id) {
+            if (!confirm("⚠️ ¿Estás segura de eliminar este miembro permanentemente?")) {
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(db, "miembros", id));
+                alert("✅ Miembro eliminado correctamente.");
+                cargarListaMiembros();
+            } catch (error) {
+                console.error("Error al eliminar miembro:", error);
+                alert("❌ Ocurrió un error al intentar eliminar el registro.");
+            }
+        };
 
         // Filtro por nombre y tipo
         window.filtrarTabla = function() {
